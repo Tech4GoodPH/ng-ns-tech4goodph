@@ -3,9 +3,7 @@
         Add map here
     -->
 
-    <Label text="Photos:"></Label>
-
-    <ListView [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
+    <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
         <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout orientation="horizontal" class="list-group-item">
                 <Label text="{{photo.rating | rating}}: ({{photo.lat}}, {{photo.lng}})"></Label>
@@ -13,6 +11,8 @@
         </ng-template>
     </ListView>
 
-    <Button class="camera-button" text="Open Camera" class="btn btn-primary" [nsRouterLink]="['/camera']" pageTransition="slide" clearHistory="true"></Button>
-    <Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button>
+    <StackLayout class="buttons-wrapper">
+        <Button class="camera-button" text="Open Camera" class="btn btn-primary" [nsRouterLink]="['/camera']" pageTransition="slide" clearHistory="true"></Button>
+        <!--Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button-->
+    </StackLayout>
 </StackLayout>

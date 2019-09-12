@@ -6,3 +6,11 @@
 .camera-button {
     margin-top: 30px;
 }
+
+.map-wrapper {
+    height: 80%;
+}
+
+.buttons-wrapper {
+    height: 20%
+}
