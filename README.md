@@ -2,4 +2,4 @@
 
 This project is created with NativeScript and Angular
 
-More details [here]('https://ayoayco.com/notes/bayanihan-basurahan')
+[More details here](https://ayoayco.com/notes/bayanihan-basurahan).
