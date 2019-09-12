@@ -26,7 +26,7 @@ export class SubmissionButtonsComponent implements OnInit {
   cancel() {
     this.apiService.removeFromLocal(this.photoId);
     this.loggerService.debug(`[SubmissionButtonsComponent cancel]`);
-    this.router.navigate(['map']);
+    // this.router.navigate(['map', {pageTransition: 'slideRight'}]);
   }
 
   ratePhoto(rating: number) {

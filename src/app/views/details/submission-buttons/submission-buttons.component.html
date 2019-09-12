@@ -2,5 +2,6 @@
 <Button text="Good!" class="btn btn-primary" (tap)="ratePhoto(1)"></Button>
 <Button text="Cancel" class="btn btn-primary"
     [nsRouterLink]="['/map']"
-    pageTransition="slideRight">
+    pageTransition="slideRight"
+    (tap)="cancel()">
 </Button>

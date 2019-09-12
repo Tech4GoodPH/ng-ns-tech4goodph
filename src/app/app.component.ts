@@ -12,14 +12,13 @@ import { LocalStorageService } from './services/local-storage/local-storage.serv
 export class AppComponent implements OnInit {
 
     constructor (
-        private apiService: ApiAccessService,
-        private mockService: MockDataService,
         private loggerService: LoggerService,
         private localStorage: LocalStorageService
     ) {}
 
     ngOnInit () {
         this.loggerService.debug(`[AppComponent] initialize...`);
+        this.localStorage.clear();
     }
 
 }
