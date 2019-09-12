@@ -31,9 +31,4 @@ export class CameraComponent implements OnInit {
     this.router.navigate(['details', photo.id]);
   }
 
-  back(){
-    this.loggerService.debug(`[CameraComponent back]`);
-    this.router.navigate(['map']);
-  }
-
 }

@@ -1,3 +1,6 @@
 <Button text="Bad!" class="btn btn-primary" (tap)="ratePhoto(0)"></Button>
 <Button text="Good!" class="btn btn-primary" (tap)="ratePhoto(1)"></Button>
-<Button text="Cancel" class="btn btn-primary" (tap)="cancel()"></Button>
+<Button text="Cancel" class="btn btn-primary"
+    [nsRouterLink]="['/map']"
+    pageTransition="slideRight">
+</Button>
