@@ -1,2 +1,2 @@
-<img src="{{photo.url}}" alt="Photo {{photo.id}}" />
-<Button text="photo-card works!" class="btn btn-primary"></Button>
+<Label text="Photo Card {{photoId}}"></Label>
+<Image *ngIf="photo !== undefined" src="{{photo.url}}" alt="Photo {{photo.id}}"></Image>

@@ -5,16 +5,18 @@ export const DEFAULT_Y = 121.097527;
 export interface IPhoto {
   url: string; // url
   timestamp: Date;
-  location: [number, number];
+  lng: number;
+  lat: number;
   rating: number;
   id: string; // unique id
 }
 
 export class Photo implements IPhoto {
     constructor(
-        public url: string = '/src/assets/garbage.jpg',
+        public url: string = '~/assets/garbage.jpg',
         public timestamp: Date = new Date(),
-        public location: [number, number] = [DEFAULT_X + Math.random() * 0.00001, DEFAULT_Y + Math.random() * 0.00001],
+        public lng: number = DEFAULT_X + Math.random() * 0.00001,
+        public lat: number = DEFAULT_Y + Math.random() * 0.00001,
         public rating: number = 0,
         public id: string = ''
     ) {}

@@ -1,1 +1,5 @@
-<ns-photo-card [photoId]="photoId"></ns-photo-card>
+<StackLayout>
+    <Label text="Details" class="h1 text-center" textWrap="true"></Label>
+    <ns-photo-card [photoId]="photoId"></ns-photo-card>
+    <Button class="home-button" text="Back to Map" class="btn btn-primary" [nsRouterLink]="['/map']" pageTransition="slide" clearHistory="true"></Button>
+</StackLayout>

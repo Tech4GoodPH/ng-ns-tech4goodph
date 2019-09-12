@@ -1,56 +1,39 @@
 import { Injectable } from '@angular/core';
-
-export enum LocalStorageKey {
-	IconColors = 'iconColors',
-	FncCreateNewSupplier = 'fnc_create_new_supplier',
-	FavoriteLinks = 'favoriteLinks',
-	M3Menu = 'M3Menu',
-	M3MenuInfo = 'M3MenuInfo',
-	MultiFinancial = 'multi://financial',
-	MultiSupplier = 'multi://supplier',
-	MultiSupplierSearch = 'multi://suppliersearch',
-	MultiSupplierMi = 'multi://suppliermi',
-	MultiTool = 'multi://tool',
-	MultiWarehouse = 'multi://warehouse',
-	MultiCustomerMi = 'multi://customermi',
-	RecentTasks = 'recentTasks',
-	WizardNewSupplier = 'wizard_new_supplier',
-	GetOutput = 'getOutput',
-	GetInput = 'getInput',
-	UiTheme = 'Theme',
-	Color = 'Color'
-}
+import { LoggerService } from '../logger/logger.service';
+import * as appSettings from 'tns-core-modules/application-settings';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class LocalStorageService {
-	private localStorage: Storage;
 
-	constructor() {
-		this.localStorage = window.localStorage;
-	}
+	constructor(
+		private loggerService: LoggerService
+	) {}
 
 	/**
 	 * Clears the storage by removing all entries. Subsequent `get(x)` calls for a key *x* will return `undefined`, until a new value is set
 	 * for key *x*.
 	 */
 	clear(): void {
-		this.localStorage.clear();
+		appSettings.clear();
 	}
 
 	/**
 	 * Performs the actual retrieval of a value from storage.
 	 *
 	 * @param   key Identifier of the entry whose value is to be retrieved.
-	 * @returns     The value that is stored for the specified entry or `null` if no entry exists for the specified key.
+	 * @returns     The value that is st*ored for the specified entry or `null` if no entry exists for the specified key.
 	 */
-	getItem<T>(key: LocalStorageKey | string, parseJson = true): T {
-		const value: any = this.localStorage.getItem(key);
-		if (value === null) {
+	getItem<T>(key: string, parseJson = true): T {
+
+		const value: any = appSettings.getString(key);
+		if (typeof value !== 'string') {
+			this.loggerService.debug(`[LocalStorageService getItem] no value found for ${key}`);
 			return undefined;
 		}
 
+		this.loggerService.debug(`[LocalStorageService getItem] value found for ${key}`);
 		return parseJson ? JSON.parse(value) : value;
 	}
 
@@ -60,8 +43,8 @@ export class LocalStorageService {
 	 * @param   key Identifier of the entry for which its presence in the storage is to be checked.
 	 * @returns     `true` if an entry with the specified key exists in the storage, `false` if not.
 	 */
-	has(key: LocalStorageKey | string): boolean {
-		return this.localStorage.getItem(key) !== null;
+	has(key: string): boolean {
+		return appSettings.hasKey(key) !== null;
 	}
 
 	/**
@@ -70,13 +53,13 @@ export class LocalStorageService {
 	 *
 	 * @param key Identifier of the entry which is to be removed.
 	 */
-	remove(key: LocalStorageKey | string): void {
-		this.localStorage.removeItem(key);
+	remove(key: string): void {
+		appSettings.remove(key);
 	}
 
 	removeKeys(keys: string[]): void {
 		for (const key of keys) {
-			this.localStorage.removeItem(key);
+			appSettings.remove(key);
 		}
 	}
 
@@ -86,11 +69,13 @@ export class LocalStorageService {
 	 * @param key   Identifier of the entry for which the value is to be stored.
 	 * @param value The value that is to be stored.
 	 */
-	setItem(key: LocalStorageKey | string, value: any): void {
+	setItem(key: string, value: any): void {
 		if (typeof value === 'object') {
 			value = JSON.stringify(value);
 		}
-		return this.localStorage.setItem(key, value);
+		
+		this.loggerService.debug(`[LocalStorageService setItem] ${key}`);
+		return appSettings.setString(key, value);
 	}
 
 }

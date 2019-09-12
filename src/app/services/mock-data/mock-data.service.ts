@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Photo } from '~/app/interfaces/photo.interface';
+import { LoggerService } from '../logger/logger.service';
+import { ApiAccessService } from '../api-access/api-access.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockDataService {
 
-  constructor() { }
+  constructor(
+    private loggerService: LoggerService,
+    private apiService: ApiAccessService
+  ) { }
 
   /**
    * Returns an array of Photos with random locations
@@ -15,9 +20,12 @@ export class MockDataService {
   generatePhotosArray(length: number = 5): Photo[] {
     const photosArray: Photo[] = [];
     for (let i = 0; i < length; i++) {
-      photosArray.push(new Photo());
+      const photo = new Photo();
+      photo.id = this.apiService.generatePhotoId()
+      photosArray.push(photo);
     }
 
+    this.loggerService.debug(`[MockDataComponent generatePhotosArray] ${photosArray.length} generated`);
     return photosArray
   }
 
@@ -25,6 +33,9 @@ export class MockDataService {
    * Returns a Photo with a random location
    */
   generatePhoto(): Photo {
-    return new Photo();
+    const photo = new Photo();
+    photo.id = this.apiService.generatePhotoId();
+    this.loggerService.debug(`[MockDataComponent generatePhoto] ${photo.id}`);
+    return photo;
   }
 }

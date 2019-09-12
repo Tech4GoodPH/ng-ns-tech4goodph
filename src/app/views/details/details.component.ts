@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap, Params } from '@angular/router';
+import { LoggerService } from '~/app/services/logger/logger.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'ns-details',
@@ -13,10 +15,14 @@ export class DetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private loggerService: LoggerService
   ) { }
 
   ngOnInit() {
-    this.photoId = this.route.paramMap[0];
+    this.route.params.forEach((params: Params) => {
+      this.photoId = params.id;
+    });
+    this.loggerService.debug(`[DetailsComponent initialize...] ${this.photoId}`);
   }
 
 }

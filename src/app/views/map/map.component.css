@@ -1,1 +1,8 @@
 /* Add mobile styles for the component here.  */
+.map-wrapper {
+    height: 100%;
+}
+
+.camera-button {
+    margin-top: 30px;
+}
