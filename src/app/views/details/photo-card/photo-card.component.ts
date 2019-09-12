@@ -20,7 +20,7 @@ export class PhotoCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.photo = this.apiService.getLocalPhoto(this.photoId);
+    this.photo = this.apiService.getPhoto(this.photoId);
     if (!this.photo) {
       this.loggerService.debug(`[PhotoCardComponent initialize...] No Photo Found for ${this.photoId}`);
     }

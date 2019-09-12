@@ -10,8 +10,12 @@ export class LoggerService {
 
   constructor() { }
 
+  error (message: string, obj?: any) {
+    console.error(`****************** ${message}`, obj);
+  }
+
   debug (message: string, obj?: any) {
-    console.log(`****************** APP-LOG: ${message}`);
+    console.log(`****************** ${message}`);
     if (obj) {
       console.log(obj);
     }

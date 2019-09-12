@@ -1,9 +1,21 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
-<ScrollView>
-    <StackLayout class="map-wrapper" height="100%">
-        <!--
-            Add map here
-        -->
+<StackLayout class="map-wrapper" height="100%">
+    <ContentView height="100%" width="100%">
+        <!--Mapbox
+            #map
+            accessToken="pk.eyJ1IjoiYXlvYXljbyIsImEiOiI1YzVic1JvIn0.AnH_wYkYOKMJGmrgGT-A8g"
+            mapStyle="traffic_day"
+            latitude="-6.21462"
+            longitude="106.84513"
+            hideCompass="true"
+            zoomLevel="14"
+            showUserLocation="true"
+            disableZoom="false"
+            disableRotation="false"
+            disableScroll="false"
+            disableTilt="false"
+            (mapReady)="onMapReady($event)">
+        </Mapbox-->
 
         <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
             <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
@@ -12,10 +24,8 @@
                 </StackLayout>
             </ng-template>
         </ListView>
+    </ContentView>
 
-        <StackLayout class="buttons-wrapper">
-            <Button class="camera-button" text="Open Camera" class="btn btn-primary" [nsRouterLink]="['/camera']" pageTransition="slide" clearHistory="true"></Button>
-            <!--Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button-->
-        </StackLayout>
-    </StackLayout>
-</ScrollView>
+    <Button class="camera-button" text="Open Camera" class="btn btn-primary" [nsRouterLink]="['/camera']" pageTransition="slide" clearHistory="true"></Button>
+    <!--Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button-->
+</StackLayout>
