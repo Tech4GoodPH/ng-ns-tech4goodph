@@ -15,12 +15,19 @@ export class ApiAccessService {
     private localStorage: LocalStorageService
   ) { }
 
-  uploadPhoto(): IMessage {
+  /**
+   * IN PROGRESS : will upload photo to the backend
+   * @param photo - photo to be uploaded
+   */
+  uploadPhoto(photo: Photo): IMessage {
     return {
       success: true
     }
   }
 
+  /**
+   * IN PROGRESS : will return list of all photos from the backend
+   */
   listPhotos(): Photo[] {
     const photosArray: Photo[] = [];
 
@@ -36,11 +43,18 @@ export class ApiAccessService {
     return photosArray;
   }
 
+  /**
+   * Returns an array of photos stored in the local storage
+   */
   listLocalPhotos(): Photo[] {
     let photosArray: Photo[] = this.localStorage.getItem(PHOTOS_STORAGE_KEY);
     return photosArray;
   }
 
+  /**
+   * Saves the photo to the local storage
+   * @param photo - photo object to be saved in the local storage
+   */
   saveToLocal(photo: Photo): IMessage {
     let photosArray: Photo[] = this.localStorage.getItem(PHOTOS_STORAGE_KEY);
 
