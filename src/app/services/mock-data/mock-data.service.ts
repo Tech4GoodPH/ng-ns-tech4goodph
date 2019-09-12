@@ -19,15 +19,16 @@ export class MockDataService {
    * @param length - optional number of photos in the returned array
    */
   generatePhotosArray(length: number = 5): Photo[] {
-    const photosArray: Photo[] = mockPhotosArray;
+    const photosArray: Photo[] = [];
     for (let i = 0; i < length; i++) {
       const photo = new Photo();
-      photo.id = this.apiService.generatePhotoId()
+      photo.id = this.apiService.generatePhotoId();
+      photo.rating = Math.round(Math.random() * 2);
       photosArray.push(photo);
     }
 
     this.loggerService.debug(`[MockDataComponent generatePhotosArray] ${photosArray.length} generated`);
-    return photosArray
+    return photosArray;
   }
 
   /**
