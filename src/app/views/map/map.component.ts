@@ -3,6 +3,7 @@ import { Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { PHOTOS_STORAGE_KEY } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
+import { RouterExtensions } from 'nativescript-angular/router';
 
 @Component({
   selector: 'ns-map',
@@ -16,7 +17,8 @@ export class MapComponent implements OnInit {
 
   constructor(
     private localStorage: LocalStorageService,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
+    private router: RouterExtensions
   ) { }
 
   ngOnInit() {
@@ -24,6 +26,8 @@ export class MapComponent implements OnInit {
   }
 
   onItemTap(args){
-    this.loggerService.debug(`[MapComponent onItemTap]`, args);
+    const photoId = args.view.bindingContext.id;
+    this.loggerService.debug(`[MapComponent onItemTap] ${photoId}`);
+    this.router.navigate(['details', photoId]);
   }
 }

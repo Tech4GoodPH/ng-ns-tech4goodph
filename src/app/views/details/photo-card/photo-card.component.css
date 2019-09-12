@@ -1,1 +1,7 @@
 /* Add mobile styles for the component here.  */
+.photo-card {
+    margin: 20px;
+    padding: 5px;
+    background: white;
+    border: 1px solid #ccc;
+}

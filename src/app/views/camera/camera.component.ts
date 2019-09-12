@@ -18,7 +18,6 @@ export class CameraComponent implements OnInit {
     private mockDataService: MockDataService,
     private apiService: ApiAccessService,
     private router: RouterExtensions,
-    private location: Location,
     private loggerService: LoggerService
   ) { }
 
@@ -27,8 +26,8 @@ export class CameraComponent implements OnInit {
 
   shoot() {
     const photo: Photo = this.mockDataService.generatePhoto();
-    this.apiService.uploadPhoto(photo);
-    this.loggerService.debug(`[CameraComponent shoot]`, photo.id);
+    this.apiService.saveToLocal(photo);
+    this.loggerService.debug(`[CameraComponent shoot] ${photo.id}`);
     // open photo detail
     this.router.navigate(['details', photo.id]);
   }
