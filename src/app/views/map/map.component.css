@@ -4,13 +4,8 @@
 }
 
 .camera-button {
-    margin-top: 30px;
-}
-
-.map-wrapper {
-    height: 80%;
-}
-
-.buttons-wrapper {
-    height: 20%
+    margin: 0 0 30px 30px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
 }
