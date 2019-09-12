@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Photo } from '~/app/interfaces/photo.interface';
 import { LoggerService } from '../logger/logger.service';
 import { ApiAccessService } from '../api-access/api-access.service';
+import { mockPhotosArray } from '~/app/models/photos-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class MockDataService {
    * @param length - optional number of photos in the returned array
    */
   generatePhotosArray(length: number = 5): Photo[] {
-    const photosArray: Photo[] = [];
+    const photosArray: Photo[] = mockPhotosArray;
     for (let i = 0; i < length; i++) {
       const photo = new Photo();
       photo.id = this.apiService.generatePhotoId()
