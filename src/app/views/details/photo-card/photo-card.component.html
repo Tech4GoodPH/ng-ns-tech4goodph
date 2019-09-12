@@ -1,2 +1,5 @@
-<Label text="Photo Card {{photoId}}"></Label>
-<Image class="photo-card" *ngIf="photo !== undefined" src="{{photo.url}}" alt="Photo {{photo.id}}"></Image>
+<StackLayout class="photo-card">
+    <Image class="photo-card-image" *ngIf="photo !== undefined" src="{{photo.url}}" alt="Photo {{photo.id}}"></Image>
+    <Label text="Rating: {{photo.rating | rating}}"></Label>
+    <Label text="Time stamp: {{photo.timestamp | date:'medium'}}"></Label>
+</StackLayout>

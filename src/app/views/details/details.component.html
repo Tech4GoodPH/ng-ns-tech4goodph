@@ -1,5 +1,6 @@
-<StackLayout>
+<StackLayout class="details-wrapper">
     <Label text="Details" class="h1 text-center" textWrap="true"></Label>
     <ns-photo-card [photoId]="photoId"></ns-photo-card>
+    <ns-submission-buttons></ns-submission-buttons>
     <Button class="home-button" text="Back to Map" class="btn btn-primary" [nsRouterLink]="['/map']" pageTransition="slide" clearHistory="true"></Button>
 </StackLayout>

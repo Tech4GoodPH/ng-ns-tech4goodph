@@ -7,6 +7,8 @@ import { MapComponent } from './views/map/map.component';
 import { DetailsComponent } from './views/details/details.component';
 import { CameraComponent } from './views/camera/camera.component';
 import { PhotoCardComponent } from './views/details/photo-card/photo-card.component';
+import { RatingPipe } from './pipes/rating.pipe';
+import { SubmissionButtonsComponent } from './views/details/submission-buttons/submission-buttons.component';
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
 
@@ -27,6 +29,8 @@ import { PhotoCardComponent } from './views/details/photo-card/photo-card.compon
         DetailsComponent,
         CameraComponent,
         PhotoCardComponent,
+        RatingPipe,
+        SubmissionButtonsComponent,
     ],
     providers: [],
     schemas: [
