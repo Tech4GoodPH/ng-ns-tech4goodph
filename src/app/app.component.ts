@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiAccessService, PHOTOS_STORAGE_KEY } from './services/api-access/api-access.service';
-import { MockDataService } from './services/mock-data/mock-data.service';
 import { LoggerService } from './services/logger/logger.service';
 import { LocalStorageService } from './services/local-storage/local-storage.service';
 
@@ -18,7 +16,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit () {
         this.loggerService.debug(`[AppComponent] initialize...`);
-        this.localStorage.clear();
+        // this.localStorage.clear();
     }
 
 }
