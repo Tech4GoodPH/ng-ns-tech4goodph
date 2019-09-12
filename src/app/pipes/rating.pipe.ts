@@ -5,12 +5,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class RatingPipe implements PipeTransform {
 
-  transform(value: any, args?: any): any {
+  transform(value: number): string {
     let newStr = ''
-    if (value === '1') {
+    if (value === 1) {
       newStr = 'Good'
-    } else {
+    } else if (value === 0) {
       newStr = 'Bad'
+    } else {
+      newStr = 'Unknown'
     }
     return newStr;
   }

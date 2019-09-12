@@ -8,10 +8,11 @@
     <ListView [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
         <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout orientation="horizontal" class="list-group-item">
-                <Label [text]="photo.id"></Label>
+                <Label text="{{photo.rating | rating}}: {{photo.id}}"></Label>
             </StackLayout>
         </ng-template>
     </ListView>
 
     <Button class="camera-button" text="Open Camera" class="btn btn-primary" [nsRouterLink]="['/camera']" pageTransition="slide" clearHistory="true"></Button>
+    <Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button>
 </StackLayout>

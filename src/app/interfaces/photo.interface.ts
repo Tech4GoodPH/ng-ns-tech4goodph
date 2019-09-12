@@ -17,7 +17,7 @@ export class Photo implements IPhoto {
         public timestamp: Date = new Date(),
         public lng: number = DEFAULT_X + Math.random() * 0.00001,
         public lat: number = DEFAULT_Y + Math.random() * 0.00001,
-        public rating: number = 0,
+        public rating: number = -1,
         public id: string = ''
     ) {}
 }

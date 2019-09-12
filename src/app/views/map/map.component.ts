@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
-import { PHOTOS_STORAGE_KEY } from '~/app/services/api-access/api-access.service';
+import { PHOTOS_STORAGE_KEY, ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 import { RouterExtensions } from 'nativescript-angular/router';
 
@@ -17,12 +17,18 @@ export class MapComponent implements OnInit {
 
   constructor(
     private localStorage: LocalStorageService,
+    private apiService: ApiAccessService,
     private loggerService: LoggerService,
     private router: RouterExtensions
   ) { }
 
   ngOnInit() {
-    this.photosArray = this.localStorage.getItem(PHOTOS_STORAGE_KEY);
+    this.photosArray = this.apiService.listPhotos();
+  }
+
+  clearLocalStorage() {
+    this.photosArray = [];
+    this.localStorage.clear();
   }
 
   onItemTap(args){

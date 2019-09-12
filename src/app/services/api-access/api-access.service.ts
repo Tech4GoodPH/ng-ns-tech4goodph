@@ -109,6 +109,12 @@ export class ApiAccessService {
     return photo;
   }
 
+  removeFromLocal(photoId: string) {
+    const photosArray = this.listLocalPhotos();
+    this.localStorage.clear();
+    this.saveToLocal(photosArray.filter(photo => photo.id !== photoId));
+  }
+
   /**
    * generates a unique id string
    */
