@@ -122,8 +122,6 @@
     "no-consecutive-blank-lines": true,
     "no-angle-bracket-type-assertion": true,
   
-    // The rule have the following arguments:
-    // [ENABLED, "attribute" | "element", "selectorPrefix" | ["listOfPrefixes"], "camelCase" | "kebab-case"]
     "directive-selector": [true, "attribute", ["ns", "demo"], "kebab-case"],
     "component-selector": [true, "element", ["ns", "demo"], "kebab-case"],
   
@@ -137,8 +135,6 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
   
-    // [ENABLED, "SUFFIX"]
-    // Where "SUFFIX" is your custom suffix, for instance "Page" for Ionic 2 components.
     "component-class-suffix": [true, "Component"],
     "directive-class-suffix": [true, "Directive"]
     }

@@ -31,7 +31,7 @@ export class MapComponent implements OnInit {
     this.localStorage.clear();
   }
 
-  onItemTap(args){
+  onItemTap (args) {
     const photoId = args.view.bindingContext.id;
     this.loggerService.debug(`[MapComponent onItemTap] ${photoId}`);
     this.router.navigate(['details', photoId]);

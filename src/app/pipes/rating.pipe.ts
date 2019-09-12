@@ -6,13 +6,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class RatingPipe implements PipeTransform {
 
   transform(value: number): string {
-    let newStr = ''
+    let newStr = '';
     if (value === 1) {
-      newStr = 'Good'
+      newStr = 'Good';
     } else if (value === 0) {
-      newStr = 'Bad'
+      newStr = 'Bad';
     } else {
-      newStr = 'Unknown'
+      newStr = 'Unknown';
     }
     return newStr;
   }

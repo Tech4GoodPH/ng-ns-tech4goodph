@@ -31,7 +31,7 @@ export class SubmissionButtonsComponent implements OnInit {
 
   ratePhoto(rating: number) {
     if (typeof this.photoId !== 'string') {
-      return
+      return;
     }
     const photo = this.apiService.getLocalPhoto(this.photoId);
     // remove from local
@@ -39,7 +39,7 @@ export class SubmissionButtonsComponent implements OnInit {
     // upload photo
     photo.rating = rating;
     this.apiService.uploadPhoto(photo);
-    this.loggerService.debug(`[SubmissionButtonsComponent ratePhoto] ${rating | rating}`);
+    this.loggerService.debug(`[SubmissionButtonsComponent ratePhoto] ${rating}`);
     this.router.navigate(['map']);
   }
 
