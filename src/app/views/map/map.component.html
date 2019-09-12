@@ -8,7 +8,7 @@
     <ListView [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
         <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout orientation="horizontal" class="list-group-item">
-                <Label text="{{photo.rating | rating}}: {{photo.id}}"></Label>
+                <Label text="{{photo.rating | rating}}: ({{photo.lat}}, {{photo.lng}})"></Label>
             </StackLayout>
         </ng-template>
     </ListView>
