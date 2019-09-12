@@ -7,6 +7,7 @@ export interface IPhoto {
   timestamp: Date;
   location: [number, number];
   rating: number;
+  id: string; // unique id
 }
 
 export class Photo implements IPhoto {
@@ -14,6 +15,7 @@ export class Photo implements IPhoto {
         public url: string = '/src/assets/garbage.jpg',
         public timestamp: Date = new Date(),
         public location: [number, number] = [DEFAULT_X + Math.random() * 0.00001, DEFAULT_Y + Math.random() * 0.00001],
-        public rating: number = 0
+        public rating: number = 0,
+        public id: string = ''
     ) {}
 }

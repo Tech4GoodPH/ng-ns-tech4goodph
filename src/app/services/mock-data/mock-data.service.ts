@@ -20,4 +20,11 @@ export class MockDataService {
 
     return photosArray
   }
+
+  /**
+   * Returns a Photo with a random location
+   */
+  generatePhoto(): Photo {
+    return new Photo();
+  }
 }

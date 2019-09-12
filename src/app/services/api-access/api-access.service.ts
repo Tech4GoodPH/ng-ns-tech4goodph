@@ -20,25 +20,23 @@ export class ApiAccessService {
    * @param photo - photo to be uploaded
    */
   uploadPhoto(photo: Photo): IMessage {
-    return {
-      success: true
-    }
+    photo.id = this.generatePhotoId();
+    return this.saveToLocal(photo);
+  }
+
+  /**
+   * IN PROGRESS : will return photo with unique id
+   * @param photoId - unique id of the photo
+   */
+  getPhoto(photoId: string): Photo {
+    return this.getLocalPhoto(photoId);
   }
 
   /**
    * IN PROGRESS : will return list of all photos from the backend
    */
   listPhotos(): Photo[] {
-    const photosArray: Photo[] = [];
-
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
-    photosArray.push(new Photo());
+    const photosArray = this.listLocalPhotos();
 
     return photosArray;
   }
@@ -70,5 +68,29 @@ export class ApiAccessService {
     }
   }
 
+  /**
+   * Returns photo with id
+   * @param photoId - unique id of photo
+   */
+  getLocalPhoto(photoId: string): Photo {
+    const photosArray = this.listLocalPhotos();
+    return photosArray.find(photo => photo.id === photoId);
+  }
+
+  /**
+   * generates a unique id string
+   */
+  private generatePhotoId(): string {
+    const photosArray = this.listLocalPhotos();
+    return `${parseInt(this.getHighestId(photosArray))}`
+  }
+
+  private getHighestId(photosArray: Photo[]): string {
+    let id = `1`;
+    photosArray.forEach(photo => {
+      id = parseInt(photo.id, 10) > parseInt(id, 10) ? photo.id : id;
+    });
+    return id;
+  }
 
 }
