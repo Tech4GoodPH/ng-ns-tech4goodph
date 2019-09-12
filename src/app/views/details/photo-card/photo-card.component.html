@@ -1,5 +1,5 @@
 <StackLayout class="photo-card">
     <Image class="photo-card-image" *ngIf="photo !== undefined" src="{{photo.url}}" alt="Photo {{photo.id}}"></Image>
-    <Label text="Rating: {{photo.rating | rating}}"></Label>
+    <Label *ngIf="photo.rating >= 0" text="Rating: {{photo.rating | rating}}"></Label>
     <Label text="Time stamp: {{photo.timestamp | date:'medium'}}"></Label>
 </StackLayout>
