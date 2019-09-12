@@ -6,6 +6,7 @@ import { AppComponent } from "./app.component";
 import { MapComponent } from './views/map/map.component';
 import { DetailsComponent } from './views/details/details.component';
 import { CameraComponent } from './views/camera/camera.component';
+import { PhotoCardComponent } from './views/details/photo-card/photo-card.component';
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
 
@@ -25,6 +26,7 @@ import { CameraComponent } from './views/camera/camera.component';
         MapComponent,
         DetailsComponent,
         CameraComponent,
+        PhotoCardComponent,
     ],
     providers: [],
     schemas: [

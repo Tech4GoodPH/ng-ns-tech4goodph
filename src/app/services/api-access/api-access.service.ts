@@ -53,14 +53,19 @@ export class ApiAccessService {
    * Saves the photo to the local storage
    * @param photo - photo object to be saved in the local storage
    */
-  saveToLocal(photo: Photo): IMessage {
+  saveToLocal(photo: Photo | Photo[]): IMessage {
     let photosArray: Photo[] = this.localStorage.getItem(PHOTOS_STORAGE_KEY);
 
     if (typeof photosArray === 'undefined') {
-      photosArray = []
+      photosArray = [];
     }
 
-    photosArray.push(photo);
+    if (Array.isArray(photo)) {
+      photosArray = [...photosArray, ...photo]
+    } else {
+      photosArray.push(photo);
+    }
+
     this.localStorage.setItem(PHOTOS_STORAGE_KEY, photosArray);
 
     return {
