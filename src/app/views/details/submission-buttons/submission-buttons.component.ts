@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ApiAccessService } from '~/app/services/api-access/api-access.service';
+
 import { RouterExtensions } from 'nativescript-angular/router';
+
+import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 
 @Component({
@@ -19,6 +21,12 @@ export class SubmissionButtonsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  cancel() {
+    this.apiService.removeFromLocal(this.photoId);
+    this.loggerService.debug(`[SubmissionButtonsComponent cancel]`);
+    this.router.navigate(['map']);
   }
 
   ratePhoto(rating: number) {
