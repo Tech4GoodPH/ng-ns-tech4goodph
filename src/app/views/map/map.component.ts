@@ -1,14 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
+
+import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
+import { RouterExtensions } from 'nativescript-angular/router';
+
 import { Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
-import { PHOTOS_STORAGE_KEY, ApiAccessService } from '~/app/services/api-access/api-access.service';
+import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
-import { RouterExtensions } from 'nativescript-angular/router';
+import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 @Component({
   selector: 'ns-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
+  providers: [ModalDialogService],
   moduleId: module.id,
 })
 export class MapComponent implements OnInit {
@@ -19,7 +24,8 @@ export class MapComponent implements OnInit {
     private localStorage: LocalStorageService,
     private apiService: ApiAccessService,
     private loggerService: LoggerService,
-    private router: RouterExtensions
+    private viewContainer: ViewContainerRef,
+    private dialogService: ModalDialogService
   ) { }
 
   ngOnInit() {
@@ -34,6 +40,12 @@ export class MapComponent implements OnInit {
   onItemTap (args) {
     const photoId = args.view.bindingContext.id;
     this.loggerService.debug(`[MapComponent onItemTap] ${photoId}`);
-    this.router.navigate(['details', photoId]);
+
+    const options: ModalDialogOptions = {
+      viewContainerRef: this.viewContainer,
+      context: { photoId },
+      fullscreen: false
+    };
+    this.dialogService.showModal(DetailsDialogComponent, options);
   }
 }

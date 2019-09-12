@@ -1,14 +1,15 @@
-import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
-import { NativeScriptModule } from "nativescript-angular/nativescript.module";
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 
-import { AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 import { MapComponent } from './views/map/map.component';
 import { DetailsComponent } from './views/details/details.component';
 import { CameraComponent } from './views/camera/camera.component';
 import { PhotoCardComponent } from './views/details/photo-card/photo-card.component';
 import { RatingPipe } from './pipes/rating.pipe';
 import { SubmissionButtonsComponent } from './views/details/submission-buttons/submission-buttons.component';
+import { DetailsDialogComponent } from './views/details-dialog/details-dialog.component';
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
 
@@ -31,6 +32,7 @@ import { SubmissionButtonsComponent } from './views/details/submission-buttons/s
         PhotoCardComponent,
         RatingPipe,
         SubmissionButtonsComponent,
+        DetailsDialogComponent,
     ],
     providers: [],
     schemas: [

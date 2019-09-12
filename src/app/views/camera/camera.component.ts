@@ -3,7 +3,6 @@ import { Photo } from '~/app/interfaces/photo.interface';
 import { MockDataService } from '~/app/services/mock-data/mock-data.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
-import { Location } from '@angular/common';
 import { RouterExtensions } from 'nativescript-angular/router';
 
 @Component({
