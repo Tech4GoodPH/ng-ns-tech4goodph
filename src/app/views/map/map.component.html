@@ -1,7 +1,7 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
 <GridLayout rows="*,100" class="map-wrapper">
     <StackLayout row="0">
-        <!--Mapbox
+        <Mapbox
             #map
             accessToken="pk.eyJ1IjoiYXlvYXljbyIsImEiOiI1YzVic1JvIn0.AnH_wYkYOKMJGmrgGT-A8g"
             mapStyle="traffic_day"
@@ -15,15 +15,15 @@
             disableScroll="false"
             disableTilt="false"
             (mapReady)="onMapReady($event)">
-        </Mapbox-->
+        </Mapbox>
 
-        <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
+        <!--ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
             <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
                 <StackLayout orientation="horizontal" class="list-group-item">
                     <Label text="{{photo.rating | rating}}: ({{photo.lat}}, {{photo.lng}})"></Label>
                 </StackLayout>
             </ng-template>
-        </ListView>
+        </ListView-->
     </StackLayout>
     <StackLayout row="1" orientation="horizontal">
         <Button

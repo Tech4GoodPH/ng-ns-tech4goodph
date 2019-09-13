@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
@@ -21,7 +21,7 @@ registerElement('Mapbox', () => require('nativescript-mapbox').MapboxView);
   providers: [ModalDialogService],
   moduleId: module.id,
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, AfterViewInit {
 
   currentLat: number;
   currentLng: number;
@@ -41,6 +41,13 @@ export class MapComponent implements OnInit {
   ngOnInit() {
     this.photosArray = this.apiService.listPhotos();
     this.loggerService.debug(`[MapComponent initialize] checking if geolocation is enabled.`);
+  }
+
+  ngAfterViewInit() {
+    this.checkGeoLocation();
+  }
+
+  checkGeoLocation() {
     geolocation.isEnabled().then(enabled => {
       this.loggerService.debug(`[MapComponent initialize] geolocation isEnabled = ${enabled}`);
       if (enabled) {
