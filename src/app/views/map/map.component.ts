@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
@@ -24,12 +24,13 @@ registerElement('Mapbox', () => require('nativescript-mapbox').MapboxView);
   providers: [ModalDialogService],
   moduleId: module.id,
 })
-export class MapComponent implements OnInit, AfterViewInit {
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentLat: number;
   currentLng: number;
 
   photosArray: Photo[];
+
   map: any;
 
   @ViewChild('map', {static: false}) public mapbox: ElementRef;
@@ -49,6 +50,12 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkGeoLocation();
+  }
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.destroy();
+    }
   }
 
   /**
@@ -101,6 +108,15 @@ export class MapComponent implements OnInit, AfterViewInit {
   onMapReady(args: any) {
     this.map = args.map;
     this.recenterMap();
+    this.addMarkers();
+  }
+
+  private addMarkers() {
+    const markersArray = [];
+    this.photosArray.forEach(photo => {
+      markersArray.push({lat: photo.lat, lng: photo.lng});
+    });
+    this.map.addMarkers(markersArray);
   }
 
   /**
