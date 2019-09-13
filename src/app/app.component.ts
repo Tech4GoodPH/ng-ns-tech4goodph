@@ -22,7 +22,6 @@ export class AppComponent implements OnInit {
         this.loggerService.debug(`[AppComponent] initialize...`);
         this.localStorage.clear();
         this.apiService.saveToLocal(this.mockService.generatePhotosArray());
-
     }
 
 }

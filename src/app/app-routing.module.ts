@@ -9,6 +9,16 @@ import { DetailsDialogComponent } from './views/details-dialog/details-dialog.co
 
 const routes: Routes = [
   { path: '', redirectTo: '/map', pathMatch: 'full' },
+  { path: 'map/:id',
+    component: MapComponent,
+    data: { title: 'Map View'},
+    children: [
+        {
+            path: 'modal-view',
+            component: DetailsDialogComponent
+        }
+    ]
+  },
   { path: 'map',
     component: MapComponent,
     data: { title: 'Map View'},

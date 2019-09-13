@@ -21,6 +21,7 @@ registerElement('MapView', () => MapView);
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
 import { RouterExtensions } from 'nativescript-angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 
 export const DEFAULT_ZOOM = 12;
 
@@ -69,10 +70,18 @@ export class MapComponent implements OnInit, AfterViewInit {
     private viewContainer: ViewContainerRef,
     private dialogService: ModalDialogService,
     private router: RouterExtensions,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.photosArray = this.apiService.listPhotos();
+    this.route.params.forEach((params: Params) => {
+      const photoId = params.id;
+      if (photoId) {
+        this.addPhotoMarker(photoId);
+      }
+    });
+
   }
 
   ngAfterViewInit() {
@@ -182,7 +191,30 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.loggerService.debug(`[MapComponent onMapReady]`);
   }
 
+  private addPhotoMarker(photoId: string) {
+    const photo = this.apiService.getPhoto(photoId);
+    const marker = new Marker();
+    marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
+    // marker.title = photo.id;
+    // marker.snippet = this.apiService.ratingToString(photo.rating);
+    switch (photo.rating) {
+      case 1: marker.color = new Color('green'); break;
+      case 0: marker.color = new Color('red'); break;
+      default: marker.color = new Color('gray'); break;
+    }
+    marker.userData = {id: photo.id};
+    if (this.map) {
+      this.map.addMarker(marker);
+    }
+  }
+
+  private refreshMarkers() {
+    this.map.removeAllMarkers();
+    this.addMarkers();
+  }
+
   private addMarkers() {
+    this.loggerService.debug(`[MapComponent addMarkers] ${this.photosArray.length} photos`);
     this.photosArray.forEach(photo => {
       const marker = new Marker();
       marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
@@ -191,7 +223,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       switch (photo.rating) {
         case 1: marker.color = new Color('green'); break;
         case 0: marker.color = new Color('red'); break;
-        default: marker.color = new Color('green'); break;
+        default: marker.color = new Color('gray'); break;
       }
       marker.userData = {id: photo.id};
       if (this.map) {
