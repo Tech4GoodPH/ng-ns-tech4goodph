@@ -138,6 +138,16 @@ export class ApiAccessService {
     return id;
   }
 
+  ratingToString(rating: number) {
+    if (rating === 1) {
+      return 'Good';
+    } else if (rating === 0) {
+      return 'Bad'
+    }
+
+    return 'Unknown';
+  }
+
   /**
    * Restores all time stamps of photos from string to Date object
    * @param photosArray - array of photos

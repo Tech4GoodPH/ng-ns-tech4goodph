@@ -35,9 +35,10 @@
     "@ngtools/webpack": "~8.2.0",
     "@types/jasmine": "^3.4.0",
     "codelyzer": "^5.1.0",
+    "nativescript-dev-typescript": "^0.10.0",
     "nativescript-dev-webpack": "^1.2.0",
     "tslint": "^5.20.0",
-    "typescript": "3.4.5"
+    "typescript": "~3.5.3"
   },
   "gitHead": "42f2a6a9c94eaf9c68d2a41e0daaa1a2544bc28f",
   "readme": "NativeScript Application"

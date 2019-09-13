@@ -1,5 +1,15 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
-<GridLayout rows="*,100" class="map-wrapper">
+<GridLayout>
+    <MapView #mapView [latitude]="currentLat || latitude" [longitude]="currentLng || longitude"
+             [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
+             [tilt]="tilt" i-padding="50,50,50,50" [padding]="padding" (mapReady)="onMapReady($event)"
+             (markerSelect)="onMarkerEvent($event)" (markerBeginDragging)="onMarkerEvent($event)"
+             (markerEndDragging)="onMarkerEvent($event)" (markerDrag)="onMarkerEvent($event)"
+             (markerInfoWindowTapped)="onMarkerEvent($event)" (coordinateTapped)="onCoordinateTapped($event)"
+             (cameraChanged)="onCameraChanged($event)"
+             (cameraMove)="onCameraMove($event)"></MapView>
+</GridLayout>
+<!--GridLayout rows="*,100" class="map-wrapper">
     <StackLayout row="0">
         <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
             <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
@@ -17,16 +27,6 @@
             pageTransition="slideLeft"
             clearHistory="true"
             class="btn btn-primary">
-            <!--
-                TODO: use camera icon svg in '~/app/icons/'
-            -->
-        </Button>
-        <Button
-            (tap)="recenterMap()"
-            width="25%"
-            pageTransition="slideLeft"
-            text="Recenter Map"
-            class="btn">
         </Button>
         <Button
             (tap)="clearPhotosArray()"
@@ -35,4 +35,4 @@
             class="btn">
         </Button>
     </StackLayout>
-</GridLayout>
+</GridLayout-->

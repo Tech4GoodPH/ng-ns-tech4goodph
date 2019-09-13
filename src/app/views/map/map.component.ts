@@ -10,9 +10,10 @@ import { DetailsDialogComponent } from '../details-dialog/details-dialog.compone
 
 import { Accuracy } from 'tns-core-modules/ui/enums';
 import * as geolocation from 'nativescript-geolocation';
+import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
-registerElement('Mapbox', () => require('nativescript-mapbox').MapboxView);
+registerElement('MapView', () => MapView);
 
 /**
  * Map view component
@@ -28,12 +29,21 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentLat: number;
   currentLng: number;
+  zoom = 8;
+  minZoom = 0;
+  maxZoom = 22;
+  bearing = 0;
+  tilt = 0;
+  padding = [40, 40, 40, 40];
+
+  latitude =  -33.86;
+  longitude = 151.20;
+
+  lastCamera: String;
 
   photosArray: Photo[];
 
-  map: any;
-
-  @ViewChild('map', {static: false}) public mapbox: ElementRef;
+  map: MapView;
 
   constructor(
     private localStorage: LocalStorageService,
@@ -45,35 +55,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.photosArray = this.apiService.listPhotos();
-    this.loggerService.debug(`[MapComponent initialize] checking if geolocation is enabled.`);
   }
 
   ngAfterViewInit() {
-    this.checkGeoLocation();
+    // this.checkGeoLocation();
   }
 
   ngOnDestroy() {
     if (this.map) {
-      this.map.destroy();
-    }
-  }
-
-  /**
-   * Centers the map to the current location
-   */
-  recenterMap() {
-    if (this.map) {
-      this.map.setCenter(
-        {
-            lat: this.currentLat, // mandatory
-            lng: this.currentLng, // mandatory
-            animated: true, // default true
-            zoomLevel: 14
-        }
-      );
-      this.loggerService.debug(`[MapComponent recenter map]`);
-    } else {
-      this.loggerService.error(`[MapComponent recenter map] map not found`);
     }
   }
 
@@ -101,28 +90,61 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogService.showModal(DetailsDialogComponent, options);
   }
 
+    onCoordinateTapped(args) {
+        console.log('Coordinate Tapped, Lat: ' + args.position.latitude + ', Lon: ' + args.position.longitude, args);
+    }
+
+    onMarkerEvent(args) {
+        console.log('Marker Event: \'' + args.eventName
+            + '\' triggered on: ' + args.marker.title
+            + ', Lat: ' + args.marker.position.latitude + ', Lon: ' + args.marker.position.longitude, args);
+    }
+
+    onCameraChanged(args) {
+        console.log('Camera changed: ' + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
+        this.lastCamera = JSON.stringify(args.camera);
+    }
+
+    onCameraMove(args) {
+        console.log('Camera moving: ' + JSON.stringify(args.camera));
+    }
+
   /**
-   * Fires after Mapbox map is rendered
+   * Fires after map is rendered
    * @param args - map render finish event object
    */
-  onMapReady(args: any) {
-    this.map = args.map;
-    this.recenterMap();
-    this.addMarkers();
+  onMapReady(event: any) {
+    this.map = event.object;
+
+    this.loggerService.debug(`[MapComponent onMapReady]`);
+
+    const marker = new Marker();
+    marker.position = Position.positionFromLatLng(-33.86, 151.20);
+    marker.title = 'Sydney';
+    marker.snippet = 'Australia';
+    marker.userData = {index: 1};
+    this.map.addMarker(marker);
+    // this.addMarkers();
   }
 
   private addMarkers() {
-    const markersArray = [];
     this.photosArray.forEach(photo => {
-      markersArray.push({lat: photo.lat, lng: photo.lng});
+      const marker = new Marker();
+      marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
+      marker.title = photo.id;
+      marker.snippet = this.apiService.ratingToString(photo.rating);
+      marker.userData = {id: photo.id};
+      if (this.map) {
+        this.map.addMarker(marker);
+      }
     });
-    this.map.addMarkers(markersArray);
   }
 
   /**
    * Checks whether location access is permitted. If not, fires a request prompt.
    */
   private checkGeoLocation() {
+    this.loggerService.debug(`[MapComponent checkGeoLocation] checking if geolocation is enabled.`);
     geolocation.isEnabled().then(enabled => {
       this.loggerService.debug(`[MapComponent initialize] geolocation isEnabled = ${enabled}`);
       if (enabled) {
@@ -140,7 +162,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    * Opens a request prompt for location access
    */
   private requestLocationAccess() {
-    this.loggerService.debug(`[MapComponent request] request `);
+    this.loggerService.debug(`[MapComponent request] request location access permission`);
     geolocation.enableLocationRequest().then(() => {
         this.loggerService.debug(`[MapComponent request] location enabled!`);
         this.watchUserLocation();
@@ -153,17 +175,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    * Watches for change in users location then sets current location (x, y)
    */
   private watchUserLocation() {
-      this.loggerService.debug(`[MapComponent watch] watchLocation()`);
+      this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
           this.currentLat = position.latitude;
           this.currentLng = position.longitude;
-          this.recenterMap();
-          this.loggerService.debug(`[MapComponent watch] current location: (${this.currentLat}, ${this.currentLng})`);
+          this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
-          this.loggerService.error('[MapComponent watch] failed to get location');
+          this.loggerService.error('[MapComponent watchUserLocation] failed to get location');
       }, {
           desiredAccuracy: Accuracy.high,
-          minimumUpdateTime: 500
+          minimumUpdateTime: 100
       });
   }
 }

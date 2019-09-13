@@ -16,9 +16,6 @@ import { DetailsDialogComponent } from './views/details-dialog/details-dialog.co
 // Uncomment and add to NgModule imports if you need to use the HttpClient wrapper
 // import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
 
-import { Fontawesome } from 'nativescript-fontawesome';
-Fontawesome.init();
-
 @NgModule({
     bootstrap: [
         AppComponent
