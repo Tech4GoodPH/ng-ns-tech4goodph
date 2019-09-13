@@ -2,7 +2,7 @@ import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/cor
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
-import { DEFAULT_X, DEFAULT_Y, Photo } from '~/app/interfaces/photo.interface';
+import { Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
@@ -17,6 +17,8 @@ registerElement('MapView', () => MapView);
 
 import * as geolocation from 'nativescript-geolocation';
 
+export const DEFAULT_ZOOM = 12;
+
 /**
  * Map view component
  */
@@ -29,15 +31,16 @@ import * as geolocation from 'nativescript-geolocation';
 })
 export class MapComponent implements OnInit, AfterViewInit {
 
-  zoom = 8;
+  zoom = DEFAULT_ZOOM;
   minZoom = 0;
   maxZoom = 22;
   bearing = 0;
   tilt = 0;
   padding = [40, 40, 40, 40];
 
-  currentLat = DEFAULT_X;
-  currentLng = DEFAULT_Y;
+  centerLocation: geolocation.Location;
+  currentLat = 0;
+  currentLng = 0;
 
   lastCamera: String;
 
@@ -108,17 +111,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   onMapReady(event: any) {
     this.map = event.object;
     this.addMarkers();
+    this.map.addEventListener('idle', () => {
+      this.recenterMap();
+    });
 
     this.loggerService.debug(`[MapComponent onMapReady]`);
-
-    /*
-    const marker = new Marker();
-    marker.position = Position.positionFromLatLng(-33.86, 151.20);
-    marker.title = 'Sydney';
-    marker.snippet = 'Australia';
-    marker.userData = {index: 1};
-    this.map.addMarker(marker);
-    */
   }
 
   private addMarkers() {
@@ -176,14 +173,21 @@ export class MapComponent implements OnInit, AfterViewInit {
   private watchUserLocation() {
       this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
-          this.currentLat = position.latitude;
-          this.currentLng = position.longitude;
-          this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
+        this.centerLocation = position;
+        this.recenterMap();
+        this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');
       }, {
           desiredAccuracy: Accuracy.high,
-          minimumUpdateTime: 500
+          minimumUpdateTime: 100
       });
+  }
+
+  private recenterMap() {
+    this.currentLat = this.centerLocation.latitude;
+    this.currentLng = this.centerLocation.longitude;
+    this.zoom = DEFAULT_ZOOM;
+    this.loggerService.debug(`[MapComponent recenterMap] (${this.centerLocation.latitude}, ${this.centerLocation.longitude}) zoom:${this.zoom}!`);
   }
 }

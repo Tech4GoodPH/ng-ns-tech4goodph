@@ -1,6 +1,6 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
 <GridLayout rows="*,60">
-    <MapView row="0" #mapView [latitude]="currentLat || latitude" [longitude]="currentLng || longitude"
+    <MapView row="0" #mapView [latitude]="currentLat" [longitude]="currentLng"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
              [tilt]="tilt" i-padding="50,50,50,50" [padding]="padding" (mapReady)="onMapReady($event)"
              (markerSelect)="onMarkerEvent($event)" (markerBeginDragging)="onMarkerEvent($event)"
