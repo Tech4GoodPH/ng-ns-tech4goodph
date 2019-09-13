@@ -2,7 +2,7 @@ import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/cor
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
-import { Photo } from '~/app/interfaces/photo.interface';
+import { DEFAULT_Y, DEFAULT_X Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
@@ -39,8 +39,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   padding = [40, 40, 40, 40];
 
   centerLocation: geolocation.Location;
-  currentLat = 0;
-  currentLng = 0;
+  currentLat = DEFAULT_X;
+  currentLng = DEFAULT_Y;
 
   lastCamera: String;
 
