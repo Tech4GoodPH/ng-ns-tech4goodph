@@ -37,6 +37,18 @@
             </FormattedString> 
 
         </Button>
+        <Button
+            class="camera-button"
+            (tap)="recenterMap()"
+            pageTransition="slideLeft"
+            clearHistory="true">
+
+            <FormattedString>
+                <Span text="Recenter Map" fontFamily="Font Awesome 5 Brands,fa-brands-400"></Span>
+            </FormattedString> 
+
+        </Button>
+ 
         <!--Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button-->
     </StackLayout>
 </GridLayout>

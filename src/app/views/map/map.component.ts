@@ -110,13 +110,18 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private recenterMap() {
-    this.map.setCenter(
-      {
-          lat: this.currentLat, // mandatory
-          lng: this.currentLng, // mandatory
-          animated: true, // default true
-          zoomLevel: 14
-      }
-    );
+    if (this.map) {
+      this.map.setCenter(
+        {
+            lat: this.currentLat, // mandatory
+            lng: this.currentLng, // mandatory
+            animated: true, // default true
+            zoomLevel: 14
+        }
+      );
+      this.loggerService.debug(`[MapComponent recenter map]`);
+    } else {
+      this.loggerService.error(`[MapComponent recenter map] map not found`);
+    }
   }
 }
