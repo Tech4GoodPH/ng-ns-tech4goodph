@@ -1,5 +1,5 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
-<GridLayout rows="*,100">
+<GridLayout rows="*,60">
     <MapView row="0" #mapView [latitude]="currentLat || latitude" [longitude]="currentLng || longitude"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
              [tilt]="tilt" i-padding="50,50,50,50" [padding]="padding" (mapReady)="onMapReady($event)"
@@ -12,17 +12,10 @@
     <StackLayout row="1" orientation="horizontal">
         <Button
             [nsRouterLink]="['/camera']"
-            width="25%"
+            width="100%"
             text="Open Camera"
             pageTransition="slideLeft"
-            clearHistory="true"
-            class="btn btn-primary">
-        </Button>
-        <Button
-            (tap)="clearPhotosArray()"
-            width="25%"
-            text="Clear"
-            class="btn">
+            clearHistory="true">
         </Button>
     </StackLayout>
 
