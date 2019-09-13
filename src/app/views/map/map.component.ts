@@ -124,13 +124,13 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.photosArray.forEach(photo => {
       const marker = new Marker();
       marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
-      marker.title = photo.id;
+      // marker.title = photo.id;
+      // marker.snippet = this.apiService.ratingToString(photo.rating);
       switch (photo.rating) {
         case 1: marker.color = new Color('green'); break;
         case 0: marker.color = new Color('red'); break;
         default: marker.color = new Color('green'); break;
       }
-      marker.snippet = this.apiService.ratingToString(photo.rating);
       marker.userData = {id: photo.id};
       if (this.map) {
         this.map.addMarker(marker);
