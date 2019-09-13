@@ -13,6 +13,7 @@ import * as geolocation from 'nativescript-geolocation';
 import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
+import { Color } from 'tns-core-modules/color/color';
 registerElement('MapView', () => MapView);
 
 /**
@@ -124,6 +125,11 @@ export class MapComponent implements OnInit, AfterViewInit {
       const marker = new Marker();
       marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
       marker.title = photo.id;
+      switch (photo.rating) {
+        case 1: marker.color = new Color('green'); break;
+        case 0: marker.color = new Color('red'); break;
+        default: marker.color = new Color('green'); break;
+      }
       marker.snippet = this.apiService.ratingToString(photo.rating);
       marker.userData = {id: photo.id};
       if (this.map) {
