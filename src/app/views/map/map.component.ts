@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewContainerRef, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/core';
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
-import { Photo } from '~/app/interfaces/photo.interface';
+import { DEFAULT_X, DEFAULT_Y, Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
@@ -25,10 +25,8 @@ registerElement('MapView', () => MapView);
   providers: [ModalDialogService],
   moduleId: module.id,
 })
-export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapComponent implements OnInit, AfterViewInit {
 
-  currentLat: number;
-  currentLng: number;
   zoom = 8;
   minZoom = 0;
   maxZoom = 22;
@@ -36,8 +34,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   tilt = 0;
   padding = [40, 40, 40, 40];
 
-  latitude =  -33.86;
-  longitude = 151.20;
+  currentLat = DEFAULT_X;
+  currentLng = DEFAULT_Y;
 
   lastCamera: String;
 
@@ -59,11 +57,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // this.checkGeoLocation();
-  }
-
-  ngOnDestroy() {
-    if (this.map) {
-    }
   }
 
   /**
@@ -115,16 +108,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   onMapReady(event: any) {
     this.map = event.object;
+    this.addMarkers();
 
     this.loggerService.debug(`[MapComponent onMapReady]`);
 
+    /*
     const marker = new Marker();
     marker.position = Position.positionFromLatLng(-33.86, 151.20);
     marker.title = 'Sydney';
     marker.snippet = 'Australia';
     marker.userData = {index: 1};
     this.map.addMarker(marker);
-    // this.addMarkers();
+    */
   }
 
   private addMarkers() {
