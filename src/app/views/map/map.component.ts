@@ -2,7 +2,7 @@ import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/cor
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
-import { DEFAULT_Y, DEFAULT_X Photo } from '~/app/interfaces/photo.interface';
+import { DEFAULT_Y, DEFAULT_X, Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
