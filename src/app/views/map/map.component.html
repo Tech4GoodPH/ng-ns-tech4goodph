@@ -1,23 +1,7 @@
 <ActionBar title="Map View" class="action-bar"></ActionBar>
 <GridLayout rows="*,100" class="map-wrapper">
     <StackLayout row="0">
-        <!--Mapbox
-            #map
-            accessToken="pk.eyJ1IjoiYXlvYXljbyIsImEiOiI1YzVic1JvIn0.AnH_wYkYOKMJGmrgGT-A8g"
-            mapStyle="traffic_day"
-            latitude="-6.21462"
-            longitude="106.84513"
-            hideCompass="true"
-            zoomLevel="14"
-            showUserLocation="true"
-            disableZoom="false"
-            disableRotation="false"
-            disableScroll="false"
-            disableTilt="false"
-            (mapReady)="onMapReady($event)">
-        </Mapbox-->
-
-       <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
+        <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
             <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
                 <StackLayout orientation="horizontal" class="list-group-item">
                     <Label text="{{photo.rating | rating}}: ({{photo.lat}}, {{photo.lng}})"></Label>
@@ -28,19 +12,27 @@
     <StackLayout row="1" orientation="horizontal">
         <Button
             [nsRouterLink]="['/camera']"
+            width="25%"
             text="Open Camera"
             pageTransition="slideLeft"
-            clearHistory="true">
+            clearHistory="true"
+            class="btn btn-primary">
             <!--
                 TODO: use camera icon svg in '~/app/icons/'
             -->
         </Button>
         <Button
             (tap)="recenterMap()"
+            width="25%"
             pageTransition="slideLeft"
             text="Recenter Map"
-            clearHistory="true">
+            class="btn">
         </Button>
-        <!--Button class="clear-button" text="Clear Storage" class="btn btn-primary" (tap)="clearLocalStorage()"></Button-->
+        <Button
+            (tap)="clearPhotosArray()"
+            width="25%"
+            text="Clear"
+            class="btn">
+        </Button>
     </StackLayout>
 </GridLayout>
