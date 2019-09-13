@@ -111,9 +111,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   onMapReady(event: any) {
     this.map = event.object;
     this.addMarkers();
-    this.map.addEventListener('idle', () => {
-      this.recenterMap();
-    });
 
     this.loggerService.debug(`[MapComponent onMapReady]`);
   }
