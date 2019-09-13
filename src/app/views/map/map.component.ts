@@ -2,6 +2,8 @@ import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/cor
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
+import { ImageAsset } from 'tns-core-modules/image-asset';
+
 import { DEFAULT_Y, DEFAULT_X, Photo } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
@@ -16,6 +18,7 @@ import { Color } from 'tns-core-modules/color/color';
 registerElement('MapView', () => MapView);
 
 import * as geolocation from 'nativescript-geolocation';
+import * as camera from 'nativescript-camera';
 
 export const DEFAULT_ZOOM = 12;
 
@@ -31,22 +34,31 @@ export const DEFAULT_ZOOM = 12;
 })
 export class MapComponent implements OnInit, AfterViewInit {
 
-  zoom = DEFAULT_ZOOM;
-  minZoom = 0;
-  maxZoom = 22;
-  bearing = 0;
-  tilt = 0;
-  padding = [40, 40, 40, 40];
+  /** map settings */
+    zoom = DEFAULT_ZOOM;
+    minZoom = 0;
+    maxZoom = 22;
+    bearing = 0;
+    tilt = 0;
+    padding = [40, 40, 40, 40];
+    centerLocation: geolocation.Location;
+    currentLat = DEFAULT_X;
+    currentLng = DEFAULT_Y;
+    lastCamera: String;
+    photosArray: Photo[];
+    map: MapView;
 
-  centerLocation: geolocation.Location;
-  currentLat = DEFAULT_X;
-  currentLng = DEFAULT_Y;
-
-  lastCamera: String;
-
-  photosArray: Photo[];
-
-  map: MapView;
+  /** camera settings */
+    saveToGallery = false;
+    allowsEditing = false;
+    keepAspectRatio = true;
+    width = 320;
+    height = 240;
+    cameraImage: ImageAsset;
+    actualWidth: number;
+    actualHeight: number;
+    scale = 1;
+    labelText: string;
 
   constructor(
     private localStorage: LocalStorageService,
@@ -62,6 +74,50 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkGeoLocation();
+  }
+
+  openCamera(args) {
+    camera.requestPermissions().then(
+      () => {
+        const cameraSettings = {
+          width: this.width,
+          height: this.height,
+          keepAspectRatio: this.keepAspectRatio,
+          saveToGallery: this.saveToGallery,
+          allowsEditing: this.allowsEditing
+        };
+        camera.takePicture()
+            .then((imageAsset: any) => {
+                this.cameraImage = imageAsset;
+                const that = this;
+                imageAsset.getImageAsync(function (nativeImage, ex) {
+                    if (ex instanceof Error) {
+                        throw ex;
+                    } else if (typeof ex === 'string') {
+                        throw new Error(ex);
+                    }
+
+                    if (imageAsset.android) {
+                        // get the current density of the screen (dpi) and divide it by the default one to get the scale
+                        that.scale = nativeImage.getDensity(); // / android.util.DisplayMetrics.DENSITY_DEFAULT;
+                        that.actualWidth = nativeImage.getWidth();
+                        that.actualHeight = nativeImage.getHeight();
+                    } else {
+                        that.scale = nativeImage.scale;
+                        that.actualWidth = nativeImage.size.width * that.scale;
+                        that.actualHeight = nativeImage.size.height * that.scale;
+                    }
+                    that.labelText = `Displayed Size: ${that.actualWidth}x${that.actualHeight} with scale ${that.scale}\n` +
+                        `Image Size: ${Math.round(that.actualWidth / that.scale)}x${Math.round(that.actualHeight / that.scale)}`;
+
+                    console.log(`${that.labelText}`);
+                });
+            }, (error) => {
+                console.log('Error: ' + error);
+            });
+      },
+      () => alert('permissions rejected')
+    );
   }
 
   /**

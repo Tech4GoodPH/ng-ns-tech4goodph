@@ -11,10 +11,9 @@
 
     <StackLayout row="1" orientation="horizontal">
         <Button
-            [nsRouterLink]="['/camera']"
+            (tap)="openCamera($event)"
             width="100%"
             text="Open Camera"
-            pageTransition="slideLeft"
             clearHistory="true">
         </Button>
     </StackLayout>
