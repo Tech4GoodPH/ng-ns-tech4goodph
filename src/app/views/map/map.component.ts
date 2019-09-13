@@ -9,12 +9,13 @@ import { LoggerService } from '~/app/services/logger/logger.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 import { Accuracy } from 'tns-core-modules/ui/enums';
-import * as geolocation from 'nativescript-geolocation';
 import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
 import { Color } from 'tns-core-modules/color/color';
 registerElement('MapView', () => MapView);
+
+import * as geolocation from 'nativescript-geolocation';
 
 /**
  * Map view component
@@ -57,7 +58,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // this.checkGeoLocation();
+    this.checkGeoLocation();
   }
 
   /**
@@ -92,12 +93,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
 
     onCameraChanged(args) {
-        console.log('Camera changed: ' + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
+        // console.log('Camera changed: ' + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
         this.lastCamera = JSON.stringify(args.camera);
     }
 
     onCameraMove(args) {
-        console.log('Camera moving: ' + JSON.stringify(args.camera));
+        // console.log('Camera moving: ' + JSON.stringify(args.camera));
     }
 
   /**
@@ -182,7 +183,7 @@ export class MapComponent implements OnInit, AfterViewInit {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');
       }, {
           desiredAccuracy: Accuracy.high,
-          minimumUpdateTime: 100
+          minimumUpdateTime: 500
       });
   }
 }
