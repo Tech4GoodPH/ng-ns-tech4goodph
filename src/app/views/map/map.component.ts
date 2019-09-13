@@ -27,6 +27,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   currentLng: number;
 
   photosArray: Photo[];
+  map: any;
 
   @ViewChild('map', {static: false}) public mapbox: ElementRef;
 
@@ -76,6 +77,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       geolocation.watchLocation(position => {
           this.currentLat = position.latitude;
           this.currentLng = position.longitude;
+          this.recenterMap();
           this.loggerService.debug(`[MapComponent watch] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watch] failed to get location');
@@ -103,13 +105,18 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   onMapReady(args: any) {
-    args.map.setCenter(
-        {
-            lat: this.currentLat, // mandatory
-            lng: this.currentLng, // mandatory
-            animated: true, // default true
-            zoomLevel: 14
-        }
+    this.map = args.map;
+    this.recenterMap();
+  }
+
+  private recenterMap() {
+    this.map.setCenter(
+      {
+          lat: this.currentLat, // mandatory
+          lng: this.currentLng, // mandatory
+          animated: true, // default true
+          zoomLevel: 14
+      }
     );
   }
 }
