@@ -71,8 +71,7 @@ export class MapComponent implements OnInit, AfterViewInit {
    * Call on tap of photo point or item
    * @param args - tap event object
    */
-  onItemTap (args: any) {
-    const photoId = args.view.bindingContext.id;
+  onItemTap (photoId: string) {
     this.loggerService.debug(`[MapComponent onItemTap] ${photoId}`);
 
     const options: ModalDialogOptions = {
@@ -88,9 +87,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
 
     onMarkerEvent(args) {
-        console.log('Marker Event: \'' + args.eventName
-            + '\' triggered on: ' + args.marker.title
-            + ', Lat: ' + args.marker.position.latitude + ', Lon: ' + args.marker.position.longitude, args);
+      this.onItemTap(args.marker.userData.id);
     }
 
     onCameraChanged(args) {
