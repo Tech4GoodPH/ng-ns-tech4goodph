@@ -15,10 +15,12 @@ import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
 import { Color } from 'tns-core-modules/color/color';
+import { Image } from 'tns-core-modules/ui/image';
 registerElement('MapView', () => MapView);
 
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
+import { RouterExtensions } from 'nativescript-angular/router';
 
 export const DEFAULT_ZOOM = 12;
 
@@ -49,7 +51,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     map: MapView;
 
   /** camera settings */
-    saveToGallery = false;
+    saveToGallery = true;
     allowsEditing = false;
     keepAspectRatio = true;
     width = 320;
@@ -65,7 +67,8 @@ export class MapComponent implements OnInit, AfterViewInit {
     private apiService: ApiAccessService,
     private loggerService: LoggerService,
     private viewContainer: ViewContainerRef,
-    private dialogService: ModalDialogService
+    private dialogService: ModalDialogService,
+    private router: RouterExtensions,
   ) { }
 
   ngOnInit() {
@@ -89,8 +92,9 @@ export class MapComponent implements OnInit, AfterViewInit {
         camera.takePicture()
             .then((imageAsset: any) => {
                 this.cameraImage = imageAsset;
-                const that = this;
-                imageAsset.getImageAsync(function (nativeImage, ex) {
+                const photoImage = new Image();
+                photoImage.src = imageAsset;
+                imageAsset.getImageAsync((nativeImage, ex) => {
                     if (ex instanceof Error) {
                         throw ex;
                     } else if (typeof ex === 'string') {
@@ -99,18 +103,25 @@ export class MapComponent implements OnInit, AfterViewInit {
 
                     if (imageAsset.android) {
                         // get the current density of the screen (dpi) and divide it by the default one to get the scale
-                        that.scale = nativeImage.getDensity(); // / android.util.DisplayMetrics.DENSITY_DEFAULT;
-                        that.actualWidth = nativeImage.getWidth();
-                        that.actualHeight = nativeImage.getHeight();
+                        this.scale = nativeImage.getDensity(); // / android.util.DisplayMetrics.DENSITY_DEFAULT;
+                        this.actualWidth = nativeImage.getWidth();
+                        this.actualHeight = nativeImage.getHeight();
                     } else {
-                        that.scale = nativeImage.scale;
-                        that.actualWidth = nativeImage.size.width * that.scale;
-                        that.actualHeight = nativeImage.size.height * that.scale;
+                        this.scale = nativeImage.scale;
+                        this.actualWidth = nativeImage.size.width * this.scale;
+                        this.actualHeight = nativeImage.size.height * this.scale;
                     }
-                    that.labelText = `Displayed Size: ${that.actualWidth}x${that.actualHeight} with scale ${that.scale}\n` +
-                        `Image Size: ${Math.round(that.actualWidth / that.scale)}x${Math.round(that.actualHeight / that.scale)}`;
+                    this.labelText = `Displayed Size: ${this.actualWidth}x${this.actualHeight} with scale ${this.scale}\n` +
+                        `Image Size: ${Math.round(this.actualWidth / this.scale)}x${Math.round(this.actualHeight / this.scale)}`;
 
-                    console.log(`${that.labelText}`);
+                    this.loggerService.debug(`[MapComponent openCamera] taken photo`, this.cameraImage);
+                    const photo = new Photo(this.cameraImage['_android'], new Date(), this.currentLat, this.currentLng);
+                    this.apiService.saveToLocal(photo);
+                    this.loggerService.debug(`[MapComponent openCamera] save to local`, photo);
+                    // open photo detail
+                    this.router.navigate(['details', photo.id]);
+
+                    console.log(`${this.labelText}`);
                 });
             }, (error) => {
                 console.log('Error: ' + error);

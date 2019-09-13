@@ -69,12 +69,11 @@ export class ApiAccessService {
       this.loggerService.debug(`[ApiAccessService saveToLocal] no photo found`);
       return {
         success: false,
-        message: "photo undefined"
-      }
+        message: 'photo undefined'
+      };
     }
 
     let photosArray: Photo[] = this.localStorage.getItem(PHOTOS_STORAGE_KEY);
-
 
     if (typeof photosArray === 'undefined') {
       photosArray = [];
@@ -84,9 +83,9 @@ export class ApiAccessService {
       const id = this.generatePhotoId();
       photo.forEach(photoItem => {
         photoItem.id = photoItem.id === '' ?  `${parseInt(id, 10) + 1}` : photoItem.id;
-      })
+      });
       this.loggerService.debug(`[ApiAccessService saveToLocal] ${photo.length} photos saved`);
-      photosArray = [...photosArray, ...photo]
+      photosArray = [...photosArray, ...photo];
     } else {
       photo.id = photo.id === '' ? this.generatePhotoId() : photo.id;
       photosArray.push(photo);
@@ -95,10 +94,9 @@ export class ApiAccessService {
 
     this.localStorage.setItem(PHOTOS_STORAGE_KEY, photosArray);
 
-
     return {
       success: true
-    }
+    };
   }
 
   /**
@@ -127,12 +125,12 @@ export class ApiAccessService {
    */
   generatePhotoId(): string {
     const photosArray = this.listLocalPhotos();
-    
+
     // from https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
     const S4 = function() {
-       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    const id = (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    const id = (S4() + S4() + "-" + S4() +'-'+ S4() +'-'+ S4() + "-" + S4() + S4() + S4());
     this.loggerService.debug(`[ApiAccessService generatePhotoId] ${id}`);
 
     return id;
@@ -142,7 +140,7 @@ export class ApiAccessService {
     if (rating === 1) {
       return 'Good';
     } else if (rating === 0) {
-      return 'Bad'
+      return 'Bad';
     }
 
     return 'Unknown';
@@ -156,7 +154,7 @@ export class ApiAccessService {
     if (Array.isArray(photosArray)) {
       photosArray.forEach(photo => {
         photo.timestamp = new Date(photo.timestamp);
-      })
+      });
     }
   }
 
