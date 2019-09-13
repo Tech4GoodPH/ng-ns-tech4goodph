@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { LoggerService } from '../logger/logger.service';
 import * as appSettings from 'tns-core-modules/application-settings';
 
+/**
+ * Service for using local storage. Currently for mobile only
+ */
 @Injectable({
   providedIn: 'root'
 })

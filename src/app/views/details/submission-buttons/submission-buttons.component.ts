@@ -5,6 +5,9 @@ import { RouterExtensions } from 'nativescript-angular/router';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 
+/**
+ * Submission buttons for uploading photo with rating data
+ */
 @Component({
   selector: 'ns-submission-buttons',
   templateUrl: './submission-buttons.component.html',

@@ -7,6 +7,9 @@ import { LoggerService } from '../logger/logger.service';
 
 export const PHOTOS_STORAGE_KEY = 'LocalPhotosArray';
 
+/**
+ * Service for communicating with API and the local storage
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -109,6 +112,10 @@ export class ApiAccessService {
     return photo;
   }
 
+  /**
+   * Deletes the photo data in local storage
+   * @param photoId - unique id of photo to be removed
+   */
   removeFromLocal(photoId: string) {
     const photosArray = this.listLocalPhotos();
     this.localStorage.clear();
@@ -131,6 +138,10 @@ export class ApiAccessService {
     return id;
   }
 
+  /**
+   * Restores all time stamps of photos from string to Date object
+   * @param photosArray - array of photos
+   */
   private restoreTimeStamps(photosArray: Photo[]) {
     if (Array.isArray(photosArray)) {
       photosArray.forEach(photo => {

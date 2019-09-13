@@ -3,6 +3,9 @@ import { Photo } from '~/app/interfaces/photo.interface';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 
+/**
+ * Photo details view
+ */
 @Component({
   selector: 'ns-photo-card',
   templateUrl: './photo-card.component.html',

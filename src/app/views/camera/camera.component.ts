@@ -5,6 +5,9 @@ import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 import { RouterExtensions } from 'nativescript-angular/router';
 
+/**
+ * Placeholder component for camera view
+ */
 @Component({
   selector: 'ns-camera',
   templateUrl: './camera.component.html',

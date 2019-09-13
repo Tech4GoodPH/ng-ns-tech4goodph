@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 /**
+ * Logger service for printing and saving application log messages
  * TODO: log to a text file
  */
 @Injectable({

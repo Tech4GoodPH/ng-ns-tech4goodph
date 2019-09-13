@@ -1,5 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
+ 
+/**
+ * Pipe for formating number rating to readable string (Good, Bad or Unknown)
+ */
 @Pipe({
   name: 'rating'
 })

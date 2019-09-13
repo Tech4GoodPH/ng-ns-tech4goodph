@@ -3,6 +3,9 @@ import { ActivatedRoute, ParamMap, Params } from '@angular/router';
 import { LoggerService } from '~/app/services/logger/logger.service';
 import { switchMap } from 'rxjs/operators';
 
+/**
+ * Details view component for reviewing photo data before uploading
+ */
 @Component({
   selector: 'ns-details',
   templateUrl: './details.component.html',

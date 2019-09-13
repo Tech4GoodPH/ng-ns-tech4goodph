@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Photo } from '~/app/interfaces/photo.interface';
 import { LoggerService } from '../logger/logger.service';
 import { ApiAccessService } from '../api-access/api-access.service';
-import { mockPhotosArray } from '~/app/models/photos-data.model';
 
 @Injectable({
   providedIn: 'root'
