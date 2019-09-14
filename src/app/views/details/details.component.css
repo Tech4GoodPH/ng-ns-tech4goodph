@@ -3,8 +3,13 @@
     background: #38b6ff;
 }
 
-.cancel-btn, .good-btn, .bad-btn {
-    width: 33%;
+.cancel-btn {
+    color: #555;
+    width: 30%;
+}
+
+.good-btn, .bad-btn {
+    width: 35%;
     color: white;
 }
 

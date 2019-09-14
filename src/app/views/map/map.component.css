@@ -3,7 +3,13 @@
     height: 100%;
 }
 
-.camera-button {
+.visualization-btn {
+    width: 30%;
+    color: #555;
+}
+
+.camera-btn {
+    width: 70%;
     background: #5271ff;
     color: white;
 }

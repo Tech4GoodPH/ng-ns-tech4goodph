@@ -9,11 +9,17 @@ import { PhotoCardComponent } from './views/details/photo-card/photo-card.compon
 import { RatingPipe } from './pipes/rating.pipe';
 import { DetailsDialogComponent } from './views/details-dialog/details-dialog.component';
 import { ActionBarComponent } from './views/action-bar/action-bar.component';
+import * as platform from 'tns-core-modules/platform';
+declare var GMSServices: any;
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
 
 // Uncomment and add to NgModule imports if you need to use the HttpClient wrapper
 // import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
+
+if (platform.isIOS) {
+  GMSServices.provideAPIKey('AIzaSyCbKLdAXndfKwzW30H2qx-I7x0ZqC2HSH4');
+}
 
 @NgModule({
     bootstrap: [

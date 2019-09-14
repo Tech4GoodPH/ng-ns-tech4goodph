@@ -1,7 +1,9 @@
 <ns-action-bar></ns-action-bar>
 <ScrollView>
     <GridLayout rows="*,60" class="details-wrapper">
-        <ns-photo-card row="0" [photoId]="photoId"></ns-photo-card>
+        <GridLayout row="0" height="100%">
+            <ns-photo-card [photoId]="photoId"></ns-photo-card>
+        </GridLayout>
         <StackLayout row="1" orientation="horizontal">
             <Button text="Cancel" class="cancel-btn" (tap)="cancel()"></Button>
             <Button text="Bad!" class="bad-btn" (tap)="ratePhoto(0)"></Button>

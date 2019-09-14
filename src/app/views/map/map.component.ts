@@ -20,9 +20,10 @@ registerElement('MapView', () => MapView);
 
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
+import * as mapUtil from 'nativescript-google-maps-utils';
 import { RouterExtensions } from 'nativescript-angular/router';
-import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
+import { Router, NavigationEnd } from '@angular/router';
 
 export const DEFAULT_ZOOM = 19;
 
@@ -39,6 +40,9 @@ export const DEFAULT_ZOOM = 19;
 export class MapComponent implements OnInit, AfterViewInit {
 
   appName: string;
+  heatToggled: boolean;
+  heatMapPositions: Position[];
+  subscriptions: any;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -72,17 +76,37 @@ export class MapComponent implements OnInit, AfterViewInit {
     private loggerService: LoggerService,
     private viewContainer: ViewContainerRef,
     private dialogService: ModalDialogService,
-    private router: RouterExtensions,
-    private route: ActivatedRoute
-  ) { }
+    private router: Router,
+  ) {
+      this.router.routeReuseStrategy.shouldReuseRoute = function () {
+        return false;
+      };
+      this.subscriptions = this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          // Trick the Router into believing it's last link wasn't previously loaded
+          this.router.navigated = false;
+        }
+      });
+        }
 
   ngOnInit() {
+    this.heatToggled = false;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
   }
 
   ngAfterViewInit() {
     this.checkGeoLocation();
+  }
+
+  visualize() {
+    this.heatToggled = true;
+    this.map.removeAllMarkers();
+    this.heatMapPositions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
+      return Position.positionFromLatLng(photo.lat, photo.lng);
+    });
+    mapUtil.setupHeatmap(this.map, this.heatMapPositions);
+    this.loggerService.debug(`[MapComponent visualize] heatmap toggled for ${this.heatMapPositions.length} points`, this.heatMapPositions);
   }
 
   openCamera(args) {
@@ -211,10 +235,16 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private reloadMap() {
+    this.router.navigate(['map']);
+  }
+
   private refreshMarkers() {
+    this.heatToggled = false;
     if (this.map) {
-      this.loggerService.debug(`[MapComponent refreshMarkers]`);
+      this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
+      this.heatMapPositions = [];
       this.photosArray = this.apiService.listPhotos();
       this.addMarkers();
     } else {
@@ -284,7 +314,9 @@ export class MapComponent implements OnInit, AfterViewInit {
       geolocation.watchLocation(position => {
         this.currentLat = position.latitude;
         this.currentLng = position.longitude;
-        this.recenterMap();
+        if (!this.heatToggled) {
+          this.recenterMap();
+        }
         this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');

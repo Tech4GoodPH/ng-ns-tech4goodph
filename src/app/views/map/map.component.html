@@ -11,10 +11,19 @@
 
     <StackLayout row="1" orientation="horizontal">
         <Button
-            class="camera-button"
+            *ngIf="!heatToggled"
+            class="visualization-btn"
+            (tap)="visualize()"
+            width="30%"
+            text="Heat"
+            clearHistory="true">
+        </Button>
+
+        <Button
+            class="camera-btn"
             (tap)="openCamera($event)"
+            [ngStyle]="{width: heatToggled ? '100%' : '70%'}"
             (onLongPress)="clearPhotosArray()"
-            width="100%"
             text="Report"
             clearHistory="true">
         </Button>
