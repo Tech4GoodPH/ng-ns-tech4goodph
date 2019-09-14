@@ -105,9 +105,7 @@ export class ApiAccessService {
    */
   getLocalPhoto(photoId: string): Photo {
     const photosArray = this.listLocalPhotos();
-    const photo = photosArray.find(photo => photo.id === photoId);
-    this.loggerService.debug(`[ApiAccessService getLocalPhoto] ${photo.id}`);
-    return photo;
+    return photosArray.find(photo => photo.id === photoId);
   }
 
   /**
@@ -130,7 +128,7 @@ export class ApiAccessService {
     const S4 = function() {
        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    const id = (S4() + S4() + "-" + S4() +'-'+ S4() +'-'+ S4() + "-" + S4() + S4() + S4());
+    const id = (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
     this.loggerService.debug(`[ApiAccessService generatePhotoId] ${id}`);
 
     return id;

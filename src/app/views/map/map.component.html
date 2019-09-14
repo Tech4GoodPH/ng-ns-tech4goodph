@@ -12,7 +12,8 @@
     <StackLayout row="1" orientation="horizontal">
         <Button
             *ngIf="!heatToggled"
-            class="visualization-btn"
+            class="cancel-btn"
+            width="30%"
             (tap)="visualize()"
             text="Heat"
             clearHistory="true">
@@ -30,9 +31,10 @@
         <Button
             *ngIf="!heatToggled"
             class="main-btn"
+            width="70%"
             (tap)="openCamera($event)"
             (onLongPress)="clearPhotosArray()"
-            text="Report"
+            text="Add Point"
             clearHistory="true">
         </Button>
     </StackLayout>

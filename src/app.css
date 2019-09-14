@@ -12,6 +12,21 @@ refer to http://docs.nativescript.org/ui/theme.
 @import '~nativescript-theme-core/css/core.light.css';
 
 
+.cancel-btn {
+    background: white;
+    color: #5271ff;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #5271ff;
+    border-radius: 5px;
+    margin: 18px 0 18px 18px;
+}
+
+.main-btn {
+    background: #5271ff;
+    color: white;
+}
+
 .float-left {
     float: left;
 }

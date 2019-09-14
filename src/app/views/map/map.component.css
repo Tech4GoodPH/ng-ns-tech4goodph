@@ -1,15 +1,1 @@
 /* Add mobile styles for the component here.  */
-.map-wrapper {
-    height: 100%;
-}
-
-.visualization-btn {
-    width: 30%;
-    color: #555;
-}
-
-.main-btn {
-    width: 70%;
-    background: #5271ff;
-    color: white;
-}

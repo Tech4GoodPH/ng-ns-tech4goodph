@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/modal-dialog';
 
@@ -24,6 +24,8 @@ import * as mapUtil from 'nativescript-google-maps-utils';
 import { RouterExtensions } from 'nativescript-angular/router';
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
 import { Router, NavigationEnd } from '@angular/router';
+import { TitleCasePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 export const DEFAULT_ZOOM = 19;
 
@@ -37,12 +39,11 @@ export const DEFAULT_ZOOM = 19;
   providers: [ModalDialogService],
   moduleId: module.id,
 })
-export class MapComponent implements OnInit, AfterViewInit {
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   appName: string;
   heatToggled: boolean;
-  heatMapPositions: Position[];
-  subscriptions: any;
+  subscriptions: Subscription[] = [];
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -81,13 +82,14 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.router.routeReuseStrategy.shouldReuseRoute = function () {
         return false;
       };
-      this.subscriptions = this.router.events.subscribe((event) => {
+      const subscription = this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           // Trick the Router into believing it's last link wasn't previously loaded
           this.router.navigated = false;
         }
       });
-        }
+      this.subscriptions.push(subscription);
+  }
 
   ngOnInit() {
     this.heatToggled = false;
@@ -99,14 +101,19 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.checkGeoLocation();
   }
 
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   visualize() {
     this.heatToggled = true;
     this.map.removeAllMarkers();
-    this.heatMapPositions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
+    // positions of bad locations
+    const positions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
       return Position.positionFromLatLng(photo.lat, photo.lng);
     });
-    mapUtil.setupHeatmap(this.map, this.heatMapPositions);
-    this.loggerService.debug(`[MapComponent visualize] heatmap toggled for ${this.heatMapPositions.length} points`, this.heatMapPositions);
+    mapUtil.setupHeatmap(this.map, positions);
+    this.loggerService.debug(`[MapComponent visualize] heatmap toggled for ${positions.length} points`);
   }
 
   openCamera(args) {
@@ -244,7 +251,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     if (this.map) {
       this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
-      this.heatMapPositions = [];
       this.photosArray = this.apiService.listPhotos();
       this.addMarkers();
     } else {
