@@ -5,6 +5,8 @@ import { ConfigurationService } from '~/app/services/configuration/configuration
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { RouterExtensions } from 'nativescript-angular/router';
 
+import * as application from 'tns-core-modules/application';
+
 /**
  * Details view component for reviewing photo data before uploading
  */
@@ -28,6 +30,14 @@ export class DetailsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    // TODO: handle iOS
+    application.android.on(application.AndroidApplication.activityBackPressedEvent, (args: any) => {
+      args.cancel = true;
+      this.loggerService.debug(`[DetailsComponent] back detected`);
+      this.cancel();
+    });
+
     this.appName = this.configurationService.appName;
     this.route.params.forEach((params: Params) => {
       this.photoId = params.id;
