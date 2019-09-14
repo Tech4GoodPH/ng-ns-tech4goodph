@@ -23,7 +23,7 @@ import * as camera from 'nativescript-camera';
 import { RouterExtensions } from 'nativescript-angular/router';
 import { ActivatedRoute, Params } from '@angular/router';
 
-export const DEFAULT_ZOOM = 12;
+export const DEFAULT_ZOOM = 19;
 
 /**
  * Map view component
@@ -36,6 +36,8 @@ export const DEFAULT_ZOOM = 12;
   moduleId: module.id,
 })
 export class MapComponent implements OnInit, AfterViewInit {
+
+  longTapped: boolean;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -89,6 +91,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   openCamera(args) {
+    if (this.longTapped) {
+      this.longTapped = false;
+      return;
+    }
     camera.requestPermissions().then(
       () => {
         const cameraSettings = {
@@ -144,6 +150,9 @@ export class MapComponent implements OnInit, AfterViewInit {
    * Clears the photos in the Map
    */
   clearPhotosArray() {
+    this.longTapped = true;
+    this.loggerService.debug(`[MapComponent clearPhotosArray]`);
+    this.map.removeAllMarkers();
     this.photosArray = [];
     this.localStorage.clear();
   }
@@ -212,6 +221,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     if (this.map) {
       this.loggerService.debug(`[MapComponent refreshMarkers]`);
       this.map.removeAllMarkers();
+      this.photosArray = this.apiService.listPhotos();
       this.addMarkers();
     } else {
       this.loggerService.debug(`[MapComponent refreshMarkers] map is undefined`);
@@ -289,6 +299,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.currentLat = this.centerLocation.latitude;
     this.currentLng = this.centerLocation.longitude;
     this.zoom = DEFAULT_ZOOM;
+    this.refreshMarkers();
     this.loggerService.debug(`[MapComponent recenterMap] (${this.centerLocation.latitude}, ${this.centerLocation.longitude}) zoom:${this.zoom}!`);
   }
 }

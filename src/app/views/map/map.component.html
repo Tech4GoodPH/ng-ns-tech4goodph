@@ -12,6 +12,7 @@
     <StackLayout row="1" orientation="horizontal">
         <Button
             (tap)="openCamera($event)"
+            (onLongPress)="clearPhotosArray()"
             width="100%"
             text="Open Camera"
             clearHistory="true">
