@@ -127,13 +127,15 @@ export class MapComponent implements OnInit, AfterViewInit {
                     // open photo detail
                     this.router.navigate(['details', photo.id]);
 
-                    console.log(`${this.labelText}`);
+                    // console.log(`${this.labelText}`);
                 });
             }, (error) => {
-                console.log('Error: ' + error);
+              this.loggerService.error(`[MapComponent openCamera]`, error);
             });
       },
-      () => alert('permissions rejected')
+      () => {
+        this.loggerService.error(`[MapComponent openCamera] camera request rejected`);
+      }
     );
   }
 
@@ -141,7 +143,7 @@ export class MapComponent implements OnInit, AfterViewInit {
    * Clears the photos in the Map
    */
   clearPhotosArray() {
-    this.loggerService.debug(`[MapComponent clearPhotosArray]`);
+    this.loggerService.debug(`[MapComponent clearPhotosArray] clearing ${this.photosArray.length} photos`);
     this.map.removeAllMarkers();
     this.photosArray = [];
     this.localStorage.clear();
