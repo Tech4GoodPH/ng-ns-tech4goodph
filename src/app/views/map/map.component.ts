@@ -11,7 +11,7 @@ import { LoggerService } from '~/app/services/logger/logger.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 import { Accuracy } from 'tns-core-modules/ui/enums';
-import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
+import { MapView, Marker, Position, Bounds } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
 import { Color } from 'tns-core-modules/color/color';
@@ -47,7 +47,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     bearing = 0;
     tilt = 0;
     padding = [40, 40, 40, 40];
-    centerLocation: geolocation.Location;
     currentLat = DEFAULT_X;
     currentLng = DEFAULT_Y;
     lastCamera: String;
@@ -80,13 +79,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
-    this.route.params.forEach((params: Params) => {
-      const photoId = params.id;
-      if (photoId) {
-        this.refreshMarkers();
-      }
-    });
-
   }
 
   ngAfterViewInit() {
@@ -103,7 +95,7 @@ export class MapComponent implements OnInit, AfterViewInit {
           saveToGallery: this.saveToGallery,
           allowsEditing: this.allowsEditing
         };
-        camera.takePicture()
+        camera.takePicture(cameraSettings)
             .then((imageAsset: any) => {
                 this.cameraImage = imageAsset;
                 const photoImage = new Image();
@@ -175,6 +167,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
 
     onMarkerEvent(args) {
+      // console.log('Photo Tapped, Lat: ' + args.position.latitude + ', Lon: ' + args.position.longitude, args);
       this.onItemTap(args.marker.userData.id);
     }
 
@@ -194,8 +187,9 @@ export class MapComponent implements OnInit, AfterViewInit {
   onMapReady(event: any) {
     this.map = event.object;
     this.addMarkers();
+    const gmap = this.map.gMap;
 
-    this.loggerService.debug(`[MapComponent onMapReady]`);
+    this.loggerService.debug(`[MapComponent onMapReady]`, gmap);
   }
 
   private addPhotoMarker(photoId: string) {
@@ -222,27 +216,31 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.photosArray = this.apiService.listPhotos();
       this.addMarkers();
     } else {
-      this.loggerService.debug(`[MapComponent refreshMarkers] map is undefined`);
+      this.loggerService.debug(`[MapComponent refreshMarkers] map not yet ready`);
     }
   }
 
   private addMarkers() {
-    this.loggerService.debug(`[MapComponent addMarkers] ${this.photosArray.length} photos`);
-    this.photosArray.forEach(photo => {
-      const marker = new Marker();
-      marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
-      // marker.title = photo.id;
-      // marker.snippet = this.apiService.ratingToString(photo.rating);
-      switch (photo.rating) {
-        case 1: marker.color = new Color('#7ed957'); break;
-        case 0: marker.color = new Color('#ff5c5c'); break;
-        default: marker.color = new Color('gray'); break;
-      }
-      marker.userData = {id: photo.id};
-      if (this.map) {
-        this.map.addMarker(marker);
-      }
-    });
+    if (this.photosArray && this.photosArray.length) {
+      this.loggerService.debug(`[MapComponent addMarkers] ${this.photosArray.length} photos`);
+      this.photosArray.forEach(photo => {
+        const marker = new Marker();
+        marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
+        // marker.title = photo.id;
+        // marker.snippet = this.apiService.ratingToString(photo.rating);
+        switch (photo.rating) {
+          case 1: marker.color = new Color('#7ed957'); break;
+          case 0: marker.color = new Color('#ff5c5c'); break;
+          default: marker.color = new Color('gray'); break;
+        }
+        marker.userData = {id: photo.id};
+        if (this.map) {
+          this.map.addMarker(marker);
+        }
+      });
+    } else {
+      this.loggerService.debug(`[MapComponent addMarkers] photosArray not yet populated`);
+    }
   }
 
   /**
@@ -282,7 +280,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   private watchUserLocation() {
       this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
-        this.centerLocation = position;
+        this.currentLat = position.latitude;
+        this.currentLng = position.longitude;
         this.recenterMap();
         this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
@@ -294,10 +293,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private recenterMap() {
-    this.currentLat = this.centerLocation.latitude;
-    this.currentLng = this.centerLocation.longitude;
-    this.zoom = DEFAULT_ZOOM;
+    const southWest = Position.positionFromLatLng(this.currentLat - 0.0006943, this.currentLng - 0.0004659);
+    const northEast = Position.positionFromLatLng(this.currentLat + 0.0006943, this.currentLng + 0.0004659);
+    const bounds = Bounds.fromCoordinates(southWest, northEast);
+    this.map.setViewport(bounds);
     this.refreshMarkers();
-    this.loggerService.debug(`[MapComponent recenterMap] (${this.centerLocation.latitude}, ${this.centerLocation.longitude}) zoom:${this.zoom}!`);
+    this.loggerService.debug(`[MapComponent recenterMap] (${this.currentLat}, ${this.currentLng})`);
   }
 }

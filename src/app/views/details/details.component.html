@@ -1,7 +1,11 @@
 <ns-action-bar></ns-action-bar>
 <ScrollView>
-    <StackLayout rows="*,60" class="details-wrapper">
+    <GridLayout rows="*,60" class="details-wrapper">
         <ns-photo-card row="0" [photoId]="photoId"></ns-photo-card>
-        <ns-submission-buttons row="1" orientation="horizontal" [photoId]="photoId"></ns-submission-buttons>
-    </StackLayout>
+        <StackLayout row="1" orientation="horizontal">
+            <Button text="Cancel" class="cancel-btn" (tap)="cancel()"></Button>
+            <Button text="Bad!" class="bad-btn" (tap)="ratePhoto(0)"></Button>
+            <Button text="Good!" class="good-btn" (tap)="ratePhoto(1)"></Button>
+        </StackLayout>
+    </GridLayout>
 </ScrollView>

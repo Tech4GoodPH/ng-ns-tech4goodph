@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
 import { LoggerService } from '~/app/services/logger/logger.service';
-import { switchMap } from 'rxjs/operators';
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
+import { ApiAccessService } from '~/app/services/api-access/api-access.service';
+import { RouterExtensions } from 'nativescript-angular/router';
 
 /**
  * Details view component for reviewing photo data before uploading
@@ -21,7 +22,9 @@ export class DetailsComponent implements OnInit {
   constructor(
     private configurationService: ConfigurationService,
     private route: ActivatedRoute,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
+    private apiService: ApiAccessService,
+    private router: RouterExtensions
   ) { }
 
   ngOnInit() {
@@ -30,6 +33,26 @@ export class DetailsComponent implements OnInit {
       this.photoId = params.id;
     });
     this.loggerService.debug(`[DetailsComponent initialize...] ${this.photoId}`);
+  }
+
+  cancel() {
+    this.apiService.removeFromLocal(this.photoId);
+    this.loggerService.debug(`[DetailsComponent cancel]`);
+    this.router.navigate(['map', {pageTransition: 'slideRight', clearHistory: true}]);
+  }
+
+  ratePhoto(rating: number) {
+    if (typeof this.photoId !== 'string') {
+      return;
+    }
+    const photo = this.apiService.getLocalPhoto(this.photoId);
+    // remove from local
+    this.apiService.removeFromLocal(this.photoId);
+    // upload photo
+    photo.rating = rating;
+    this.apiService.uploadPhoto(photo);
+    this.loggerService.debug(`[DetailsComponent ratePhoto] ${rating}`);
+    this.router.navigate(['map', {pageTransition: 'slideRight', clearHistory: true}]);
   }
 
 }

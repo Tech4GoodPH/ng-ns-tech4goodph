@@ -2,3 +2,16 @@
 .details-wrapper {
     background: #38b6ff;
 }
+
+.cancel-btn, .good-btn, .bad-btn {
+    width: 33%;
+    color: white;
+}
+
+.bad-btn {
+    background: #ff5c5c;
+}
+
+.good-btn {
+    background: #7ed957;
+}
