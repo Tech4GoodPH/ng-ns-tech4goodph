@@ -15,8 +15,8 @@ export class Photo implements IPhoto {
     constructor(
         public url: string = '~/assets/garbage.jpg',
         public timestamp: Date = new Date(),
-        public lat: number = DEFAULT_X + (Math.random() * 0.08) - .04,
-        public lng: number = DEFAULT_Y + (Math.random() * 0.08) - .04,
+        public lat: number = DEFAULT_X + (Math.random() * 0.201) - .1,
+        public lng: number = DEFAULT_Y + (Math.random() * 0.201) - .1,
         public rating: number = -1,
         public id: string = ''
     ) {}
