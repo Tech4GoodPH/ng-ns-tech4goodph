@@ -1,4 +1,4 @@
-<ActionBar class="app-title" title="{{appName}}" class="action-bar" (onLongPress)="clearPhotosArray()"></ActionBar>
+<ns-action-bar></ns-action-bar>
 <GridLayout rows="*,60">
     <MapView row="0" #mapView [latitude]="currentLat" [longitude]="currentLng"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
@@ -13,6 +13,7 @@
         <Button
             class="camera-button"
             (tap)="openCamera($event)"
+            (onLongPress)="clearPhotosArray()"
             width="100%"
             text="Add Photo"
             clearHistory="true">

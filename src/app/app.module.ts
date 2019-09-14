@@ -9,6 +9,7 @@ import { PhotoCardComponent } from './views/details/photo-card/photo-card.compon
 import { RatingPipe } from './pipes/rating.pipe';
 import { SubmissionButtonsComponent } from './views/details/submission-buttons/submission-buttons.component';
 import { DetailsDialogComponent } from './views/details-dialog/details-dialog.component';
+import { ActionBarComponent } from './views/action-bar/action-bar.component';
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
 
@@ -31,6 +32,7 @@ import { DetailsDialogComponent } from './views/details-dialog/details-dialog.co
         RatingPipe,
         SubmissionButtonsComponent,
         DetailsDialogComponent,
+        ActionBarComponent,
     ],
     providers: [],
     schemas: [
