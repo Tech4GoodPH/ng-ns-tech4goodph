@@ -234,8 +234,8 @@ export class MapComponent implements OnInit, AfterViewInit {
       // marker.title = photo.id;
       // marker.snippet = this.apiService.ratingToString(photo.rating);
       switch (photo.rating) {
-        case 1: marker.color = new Color('green'); break;
-        case 0: marker.color = new Color('red'); break;
+        case 1: marker.color = new Color('#7ed957'); break;
+        case 0: marker.color = new Color('#ff5c5c'); break;
         default: marker.color = new Color('gray'); break;
       }
       marker.userData = {id: photo.id};
