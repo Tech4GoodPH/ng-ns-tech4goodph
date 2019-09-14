@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapComponent } from './views/map/map.component';
 import { DetailsComponent } from './views/details/details.component';
-import { CameraComponent } from './views/camera/camera.component';
 import { PhotoCardComponent } from './views/details/photo-card/photo-card.component';
 import { RatingPipe } from './pipes/rating.pipe';
 import { SubmissionButtonsComponent } from './views/details/submission-buttons/submission-buttons.component';
@@ -28,7 +27,6 @@ import { DetailsDialogComponent } from './views/details-dialog/details-dialog.co
         AppComponent,
         MapComponent,
         DetailsComponent,
-        CameraComponent,
         PhotoCardComponent,
         RatingPipe,
         SubmissionButtonsComponent,

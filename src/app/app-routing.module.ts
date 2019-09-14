@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
 import { MapComponent } from './views/map/map.component';
-import { CameraComponent } from './views/camera/camera.component';
 import { DetailsComponent } from './views/details/details.component';
 import { DetailsDialogComponent } from './views/details-dialog/details-dialog.component';
 
@@ -29,7 +28,6 @@ const routes: Routes = [
         }
     ]
   },
-  { path: 'camera', component: CameraComponent},
   { path: 'details/:id', component: DetailsComponent},
 
 ];
