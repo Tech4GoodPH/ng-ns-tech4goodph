@@ -26,6 +26,7 @@ import { ConfigurationService } from '~/app/services/configuration/configuration
 import { Router, NavigationEnd } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { MockDataService } from '~/app/services/mock-data/mock-data.service';
 
 export const DEFAULT_ZOOM = 19;
 
@@ -44,6 +45,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   appName: string;
   heatToggled: boolean;
   subscriptions: Subscription[] = [];
+  demoMode: boolean;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -71,6 +73,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     labelText: string;
 
   constructor(
+    private mockDataService: MockDataService,
     private configurationService: ConfigurationService,
     private localStorage: LocalStorageService,
     private apiService: ApiAccessService,
@@ -92,6 +95,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.demoMode = this.configurationService.demoMode;
     this.heatToggled = false;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
@@ -103,6 +107,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  toggleDemoMode() {
+    this.demoMode = this.configurationService.toggleDemoMode();
+    this.loggerService.debug(`[MapComponent toggleDemoMode] is demo mode? ${this.demoMode}`);
+    if (this.demoMode) {
+      this.loggerService.debug(`[MapComponent toggleDemoMode] now generating array`);
+      this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50));
+    } else {
+      this.loggerService.debug(`[MapComponent toggleDemoMode] now clearing array`);
+      this.localStorage.clear();
+    }
+    this.reloadMap();
   }
 
   visualize() {

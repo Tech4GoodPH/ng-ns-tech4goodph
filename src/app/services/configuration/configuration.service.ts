@@ -17,4 +17,9 @@ export class ConfigurationService {
   get demoMode(): boolean {
     return this._demoMode;
   }
+
+  toggleDemoMode() {
+    this._demoMode = !this._demoMode;
+    return this._demoMode;
+  }
 }
