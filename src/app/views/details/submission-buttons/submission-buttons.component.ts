@@ -43,7 +43,7 @@ export class SubmissionButtonsComponent implements OnInit {
     photo.rating = rating;
     this.apiService.uploadPhoto(photo);
     this.loggerService.debug(`[SubmissionButtonsComponent ratePhoto] ${rating}`);
-    this.router.navigate(['map']);
+    this.router.navigate(['map', photo.id]);
   }
 
 }

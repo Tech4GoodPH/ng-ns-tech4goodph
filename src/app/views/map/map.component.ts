@@ -78,7 +78,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.route.params.forEach((params: Params) => {
       const photoId = params.id;
       if (photoId) {
-        this.addPhotoMarker(photoId);
+        this.refreshMarkers();
       }
     });
 
@@ -209,8 +209,13 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private refreshMarkers() {
-    this.map.removeAllMarkers();
-    this.addMarkers();
+    if (this.map) {
+      this.loggerService.debug(`[MapComponent refreshMarkers]`);
+      this.map.removeAllMarkers();
+      this.addMarkers();
+    } else {
+      this.loggerService.debug(`[MapComponent refreshMarkers] map is undefined`);
+    }
   }
 
   private addMarkers() {
