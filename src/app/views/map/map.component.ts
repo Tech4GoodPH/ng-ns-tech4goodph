@@ -22,6 +22,7 @@ import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
 import { RouterExtensions } from 'nativescript-angular/router';
 import { ActivatedRoute, Params } from '@angular/router';
+import { ConfigurationService } from '~/app/services/configuration/configuration.service';
 
 export const DEFAULT_ZOOM = 19;
 
@@ -37,7 +38,7 @@ export const DEFAULT_ZOOM = 19;
 })
 export class MapComponent implements OnInit, AfterViewInit {
 
-  longTapped: boolean;
+  appName: string;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -66,6 +67,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     labelText: string;
 
   constructor(
+    private configurationService: ConfigurationService,
     private localStorage: LocalStorageService,
     private apiService: ApiAccessService,
     private loggerService: LoggerService,
@@ -76,6 +78,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
     this.route.params.forEach((params: Params) => {
       const photoId = params.id;
@@ -91,10 +94,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   openCamera(args) {
-    if (this.longTapped) {
-      this.longTapped = false;
-      return;
-    }
     camera.requestPermissions().then(
       () => {
         const cameraSettings = {
@@ -150,7 +149,6 @@ export class MapComponent implements OnInit, AfterViewInit {
    * Clears the photos in the Map
    */
   clearPhotosArray() {
-    this.longTapped = true;
     this.loggerService.debug(`[MapComponent clearPhotosArray]`);
     this.map.removeAllMarkers();
     this.photosArray = [];

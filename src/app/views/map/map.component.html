@@ -1,4 +1,4 @@
-<ActionBar title="Map View" class="action-bar"></ActionBar>
+<ActionBar title="{{appName}}" class="action-bar" (onLongPress)="clearPhotosArray()"></ActionBar>
 <GridLayout rows="*,60">
     <MapView row="0" #mapView [latitude]="currentLat" [longitude]="currentLng"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
@@ -12,7 +12,6 @@
     <StackLayout row="1" orientation="horizontal">
         <Button
             (tap)="openCamera($event)"
-            (onLongPress)="clearPhotosArray()"
             width="100%"
             text="Open Camera"
             clearHistory="true">
@@ -20,30 +19,3 @@
     </StackLayout>
 
 </GridLayout>
-<!--GridLayout rows="*,100" class="map-wrapper">
-    <StackLayout row="0">
-        <ListView class="map-wrapper" [items]="photosArray" (itemTap)="onItemTap($event)" class="list-group">
-            <ng-template let-photo="item" let-i="index" let-odd="odd" let-even="even">
-                <StackLayout orientation="horizontal" class="list-group-item">
-                    <Label text="{{photo.rating | rating}}: ({{photo.lat}}, {{photo.lng}})"></Label>
-                </StackLayout>
-            </ng-template>
-        </ListView>
-    </StackLayout>
-    <StackLayout row="1" orientation="horizontal">
-        <Button
-            [nsRouterLink]="['/camera']"
-            width="25%"
-            text="Open Camera"
-            pageTransition="slideLeft"
-            clearHistory="true"
-            class="btn btn-primary">
-        </Button>
-        <Button
-            (tap)="clearPhotosArray()"
-            width="25%"
-            text="Clear"
-            class="btn">
-        </Button>
-    </StackLayout>
-</GridLayout-->
