@@ -312,10 +312,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   private watchUserLocation() {
       this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
-        this.currentLat = position.latitude;
-        this.currentLng = position.longitude;
+        // don't recenter if heat map is toggled
         if (!this.heatToggled) {
-          this.recenterMap();
+          this.currentLat = position.latitude;
+          this.currentLng = position.longitude;
         }
         this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {

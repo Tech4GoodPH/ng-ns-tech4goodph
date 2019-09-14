@@ -14,15 +14,23 @@
             *ngIf="!heatToggled"
             class="visualization-btn"
             (tap)="visualize()"
-            width="30%"
             text="Heat"
             clearHistory="true">
         </Button>
 
         <Button
-            class="camera-btn"
+            *ngIf="heatToggled"
+            class="main-btn"
+            width="100%"
+            (tap)="reloadMap()"
+            text="Reload Map"
+            clearHistory="true">
+        </Button>
+
+        <Button
+            *ngIf="!heatToggled"
+            class="main-btn"
             (tap)="openCamera($event)"
-            [ngStyle]="{width: heatToggled ? '100%' : '70%'}"
             (onLongPress)="clearPhotosArray()"
             text="Report"
             clearHistory="true">
