@@ -1,5 +1,7 @@
 <ns-action-bar></ns-action-bar>
-<StackLayout rows="*,60" class="details-wrapper">
-    <ns-photo-card row="0" [photoId]="photoId"></ns-photo-card>
-    <ns-submission-buttons row="1" orientation="horizontal" [photoId]="photoId"></ns-submission-buttons>
-</StackLayout>
+<ScrollView>
+    <StackLayout rows="*,60" class="details-wrapper">
+        <ns-photo-card row="0" [photoId]="photoId"></ns-photo-card>
+        <ns-submission-buttons row="1" orientation="horizontal" [photoId]="photoId"></ns-submission-buttons>
+    </StackLayout>
+</ScrollView>
