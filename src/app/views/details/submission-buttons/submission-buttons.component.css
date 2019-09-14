@@ -1,1 +1,14 @@
 /* Add mobile styles for the component here.  */
+
+.good-btn, .bad-btn {
+    width: 50%;
+    color: white;
+}
+
+.bad-btn {
+    background: red;
+}
+
+.good-btn {
+    background: green;
+}

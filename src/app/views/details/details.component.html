@@ -1,5 +1,5 @@
-<ActionBar title="{{appName}}" class="action-bar"></ActionBar>
-<StackLayout class="details-wrapper">
-    <ns-photo-card [photoId]="photoId"></ns-photo-card>
-    <ns-submission-buttons [photoId]="photoId"></ns-submission-buttons>
+<ActionBar class="app-title" title="{{appName}}" class="action-bar"></ActionBar>
+<StackLayout rows="*,60" class="details-wrapper">
+    <ns-photo-card row="0" [photoId]="photoId"></ns-photo-card>
+    <ns-submission-buttons row="1" orientation="horizontal" [photoId]="photoId"></ns-submission-buttons>
 </StackLayout>
