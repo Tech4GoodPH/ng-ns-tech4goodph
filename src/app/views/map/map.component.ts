@@ -6,7 +6,7 @@ import { ImageAsset } from 'tns-core-modules/image-asset';
 
 import { DEFAULT_Y, DEFAULT_X, Photo, Rating } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
-import { ApiAccessService } from '~/app/services/api-access/api-access.service';
+import { ApiAccessService, PHOTOS_STORAGE_KEY } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
@@ -32,7 +32,7 @@ export enum ViewMode {
   PointsMap = 'PoinstMapView'
 }
 export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
-export const DEFAULT_ZOOM = 19;
+export const DEFAULT_ZOOM = 12;
 export const LAST_CAMERA_KEY = 'LastCamera';
 
 /**
@@ -52,6 +52,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   subscriptions: Subscription[] = [];
   demoMode: boolean;
   ViewMode = ViewMode;
+  firstLoad: boolean;
+  longPressedViewMode: boolean;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -104,6 +106,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.firstLoad = true;
     this.demoMode = this.configurationService.demoMode;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
@@ -128,23 +131,33 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleDemoMode() {
+    this.longPressedViewMode = true;
     this.demoMode = this.configurationService.toggleDemoMode();
     this.loggerService.debug(`[MapComponent toggleDemoMode] is demo mode? ${this.demoMode}`);
-    if (this.demoMode) {
+    if (this.demoMode && !this.firstLoad) {
       this.loggerService.debug(`[MapComponent toggleDemoMode] now generating array`);
+      this.apiService.clearLocalPhotos();
       this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50));
     } else {
       this.loggerService.debug(`[MapComponent toggleDemoMode] now clearing array`);
-      this.localStorage.clear();
+      this.apiService.clearLocalPhotos();
     }
-    this.reloadMap();
+    this.refreshMarkers();
   }
 
   togglePointsMap() {
+    if (this.longPressedViewMode) {
+      this.longPressedViewMode = false;
+      return;
+    }
     this.router.navigate(['map', ViewMode.PointsMap]);
   }
 
   toggleHeatMap() {
+    if (this.longPressedViewMode) {
+      this.longPressedViewMode = false;
+      return;
+    }
     this.router.navigate(['map', ViewMode.HeatMap]);
   }
 
@@ -218,7 +231,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loggerService.debug(`[MapComponent clearPhotosArray] clearing ${this.photosArray.length} photos`);
     this.map.removeAllMarkers();
     this.photosArray = [];
-    this.localStorage.clear();
+    this.localStorage.remove(PHOTOS_STORAGE_KEY);
   }
 
   /**
@@ -271,13 +284,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   onMapReady(event: any) {
     this.map = event.object;
+
     if (this.viewMode === ViewMode.PointsMap) {
       this.setupMarkers();
     } else {
       this.setupHeatMap();
     }
-
-    this.recenterMap();
 
     this.loggerService.debug(`[MapComponent onMapReady] map is ready. view mode: ${this.viewMode}`);
   }
@@ -291,7 +303,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
       this.photosArray = this.apiService.listPhotos();
-      this.setupMarkers();
+      if (this.viewMode === ViewMode.HeatMap) {
+        this.setupHeatMap();
+      } else {
+        this.setupMarkers();
+      }
     } else {
       this.loggerService.debug(`[MapComponent refreshMarkers] map not yet ready`);
     }
@@ -380,7 +396,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loggerService.debug(`[MapComponent watchUserLocation] user location found:`, position);
         this.userLat = position.latitude;
         this.userLng = position.longitude;
-        this.recenterMap();
+        if (this.firstLoad) {
+          this.firstLoad = false;
+          this.currentLng = this.userLng;
+          this.currentLat = this.userLat;
+          if (this.demoMode) {
+            this.apiService.clearLocalPhotos();
+            this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50, this.currentLat, this.currentLng));
+            this.loggerService.debug(`[MapComponent watchUserLocation] first load, demo mode, generated mock data`);
+            this.refreshMarkers();
+          }
+        } else {
+          this.recenterMap();
+        }
         this.loggerService.debug(`[MapComponent watchUserLocation] user location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');

@@ -108,6 +108,10 @@ export class ApiAccessService {
     return photosArray.find(photo => photo.id === photoId);
   }
 
+  clearLocalPhotos() {
+    this.localStorage.remove(PHOTOS_STORAGE_KEY);
+  }
+
   /**
    * Deletes the photo data in local storage
    * @param photoId - unique id of photo to be removed
