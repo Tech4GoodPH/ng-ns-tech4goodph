@@ -11,7 +11,7 @@ import { LoggerService } from '~/app/services/logger/logger.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 import { Accuracy } from 'tns-core-modules/ui/enums';
-import { MapView, Marker, Position, Bounds } from 'nativescript-google-maps-sdk';
+import { MapView, Marker, Position, Bounds, Camera } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
 import { Color } from 'tns-core-modules/color/color';
@@ -33,6 +33,7 @@ export enum ViewMode {
 }
 export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
 export const DEFAULT_ZOOM = 19;
+export const LAST_CAMERA_KEY = 'LastCamera';
 
 /**
  * Map view component
@@ -61,9 +62,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     padding = [40, 40, 40, 40];
     currentLat = DEFAULT_X;
     currentLng = DEFAULT_Y;
-    lastCamera: String;
     photosArray: Photo[];
     map: MapView;
+    userLat: number;
+    userLng: number;
 
   /** camera settings */
     saveToGallery = true;
@@ -191,7 +193,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                         `Image Size: ${Math.round(this.actualWidth / this.scale)}x${Math.round(this.actualHeight / this.scale)}`;
 
                     this.loggerService.debug(`[MapComponent openCamera] taken photo`, this.cameraImage);
-                    const photo = new Photo(this.cameraImage['_android'], new Date(), this.currentLat, this.currentLng);
+                    const photo = new Photo(this.cameraImage['_android'], new Date(), this.userLat, this.userLng);
                     this.apiService.saveToLocal(photo);
                     this.loggerService.debug(`[MapComponent openCamera] save to local`, photo);
                     // open photo detail
@@ -244,13 +246,24 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onCameraChanged(args) {
-        // console.log('Camera changed: ' + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
-        this.lastCamera = JSON.stringify(args.camera);
+        // store camera to storage
+        this.localStorage.setItem(LAST_CAMERA_KEY, args.camera);
     }
 
     onCameraMove(args) {
         // console.log('Camera moving: ' + JSON.stringify(args.camera));
     }
+
+  onCheckedChange(event: any) {
+    const isChecked = event.object.checked;
+    if (isChecked) {
+      this.router.navigate(['map', ViewMode.HeatMap, {clearHistory: true}]);
+      this.loggerService.debug(`[MapComponent onCheckedChange] toggle heat map`);
+    } else {
+      this.router.navigate(['map', ViewMode.PointsMap, {clearHistory: true}]);
+      this.loggerService.debug(`[MapComponent onCheckedChange] toggle points map`);
+    }
+  }
 
   /**
    * Fires after map is rendered
@@ -263,9 +276,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.setupHeatMap();
     }
-    const gmap = this.map.gMap;
 
-    this.loggerService.debug(`[MapComponent onMapReady]`, gmap);
+    this.recenterMap();
+
+    this.loggerService.debug(`[MapComponent onMapReady] map is ready. view mode: ${this.viewMode}`);
   }
 
   private reloadMap(viewMode: ViewMode = ViewMode.PointsMap) {
@@ -350,7 +364,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private requestLocationAccess() {
     this.loggerService.debug(`[MapComponent request] request location access permission`);
     geolocation.enableLocationRequest().then(() => {
-        this.loggerService.debug(`[MapComponent request] location enabled!`);
+        this.loggerService.debug(`[MapComponent request] location enabled - searching user location`);
+        this.localStorage.remove(LAST_CAMERA_KEY);
         this.watchUserLocation();
     }, e => {
         this.loggerService.error(`[MapComponent request] Failed to enable`, e);
@@ -361,14 +376,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    * Watches for change in users location then sets current location (x, y)
    */
   private watchUserLocation() {
-      this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
-        // don't recenter if heat map is toggled
-        if (this.viewMode === ViewMode.HeatMap) {
-          this.currentLat = position.latitude;
-          this.currentLng = position.longitude;
-        }
-        this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
+        this.loggerService.debug(`[MapComponent watchUserLocation] user location found:`, position);
+        this.userLat = position.latitude;
+        this.userLng = position.longitude;
+        this.recenterMap();
+        this.loggerService.debug(`[MapComponent watchUserLocation] user location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');
       }, {
@@ -377,12 +390,22 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  private recenterMapToUser() {
+      this.currentLng = this.userLng;
+      this.currentLat = this.userLat;
+      this.zoom = DEFAULT_ZOOM;
+      this.loggerService.debug(`[MapComponent recenterMapToUser] user location: (${this.currentLat}, ${this.currentLng})`);
+  }
+
   private recenterMap() {
-    const southWest = Position.positionFromLatLng(this.currentLat - 0.0006943, this.currentLng - 0.0004659);
-    const northEast = Position.positionFromLatLng(this.currentLat + 0.0006943, this.currentLng + 0.0004659);
-    const bounds = Bounds.fromCoordinates(southWest, northEast);
-    this.map.setViewport(bounds);
-    this.refreshMarkers();
-    this.loggerService.debug(`[MapComponent recenterMap] (${this.currentLat}, ${this.currentLng})`);
+    const lastCamera: Camera = this.localStorage.getItem(LAST_CAMERA_KEY);
+    if (typeof lastCamera !== 'undefined') { // && this.currentLng !== lastCamera.longitude && this.currentLat !== lastCamera.latitude) {
+      this.currentLng = lastCamera.longitude;
+      this.currentLat = lastCamera.latitude;
+      this.zoom = lastCamera.zoom;
+      this.loggerService.debug(`[MapComponent recenterMap] center to last stored location: (${this.currentLat}, ${this.currentLng})`);
+    } else {
+      this.recenterMapToUser();
+    }
   }
 }

@@ -11,6 +11,23 @@
              (cameraMove)="onCameraMove($event)"></MapView>
 
     <StackLayout row="1" orientation="horizontal">
+        <!--StackLayout>
+            <Switch
+                checked="false"
+                (checkedChange)="onCheckedChange($event)"
+                class="m-15">
+            </Switch>
+        </StackLayout-->
+        <Button
+            *ngIf="viewMode === ViewMode.HeatMap"
+            class="cancel-btn"
+            width="30%"
+            (tap)="togglePointsMap()"
+            (onLongPress)="toggleDemoMode()"
+            text="Back"
+            clearHistory="true">
+        </Button>
+
         <Button
             *ngIf="viewMode === ViewMode.PointsMap"
             class="cancel-btn"
@@ -18,15 +35,6 @@
             (tap)="toggleHeatMap()"
             (onLongPress)="toggleDemoMode()"
             text="Heat"
-            clearHistory="true">
-        </Button>
-
-        <Button
-            *ngIf="viewMode === ViewMode.HeatMap"
-            class="cancel-btn"
-            width="30%"
-            (tap)="togglePointsMap()"
-            text="Points"
             clearHistory="true">
         </Button>
 
