@@ -48,7 +48,7 @@ export class DetailsComponent implements OnInit {
   cancel() {
     this.apiService.removeFromLocal(this.photoId);
     this.loggerService.debug(`[DetailsComponent cancel]`);
-    this.router.navigate(['map', {pageTransition: 'slideRight', clearHistory: true}]);
+    this.router.navigate(['map', {pageTransitbuiion: 'slideRight', clearHistory: true}]);
   }
 
   ratePhoto(rating: number) {
@@ -60,6 +60,7 @@ export class DetailsComponent implements OnInit {
     this.apiService.removeFromLocal(this.photoId);
     // upload photo
     photo.rating = rating;
+    this.apiService.saveToLocal(photo);
     this.apiService.uploadPhoto(photo);
     this.loggerService.debug(`[DetailsComponent ratePhoto] ${rating}`);
     this.router.navigate(['map', {pageTransition: 'slideRight', clearHistory: true}]);

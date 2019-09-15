@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~8.2.0",
     "@angular/router": "~8.2.0",
     "nativescript-angular": "^8.2.1",
+    "nativescript-background-http": "^4.1.0",
     "nativescript-camera": "^4.5.0",
     "nativescript-geolocation": "^5.1.0",
     "nativescript-google-maps-sdk": "^2.7.0",
