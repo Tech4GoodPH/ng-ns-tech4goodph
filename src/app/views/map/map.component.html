@@ -1,5 +1,4 @@
 <ns-action-bar></ns-action-bar>
-<Label *ngIf="configurationService.demoMode" text="Demo Mode"></Label>
 <GridLayout rows="*,60">
     <MapView row="0" #mapView [latitude]="currentLat" [longitude]="currentLng"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
