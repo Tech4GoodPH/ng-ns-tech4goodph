@@ -21,6 +21,7 @@ registerElement('MapView', () => MapView);
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
 import * as mapUtil from 'nativescript-google-maps-utils';
+
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
 import { Router, NavigationEnd, ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -165,7 +166,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupHeatMap() {
     // positions of bad locations
-    const positions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
+    const positions = this.photosArray.filter(photo => photo.rating === Rating.Bad).map(photo => {
       return Position.positionFromLatLng(photo.lat, photo.lng);
     });
     mapUtil.setupHeatmap(this.map, positions);
