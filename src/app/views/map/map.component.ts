@@ -32,7 +32,7 @@ export enum ViewMode {
   PointsMap = 'PoinstMapView'
 }
 export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
-export const DEFAULT_ZOOM = 15;
+export const DEFAULT_ZOOM = 19;
 export const LAST_CAMERA_KEY = 'LastCamera';
 
 /**
