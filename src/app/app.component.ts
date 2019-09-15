@@ -37,10 +37,6 @@ export class AppComponent implements OnInit {
 
     ngOnInit () {
         this.loggerService.debug(`[AppComponent] initialize...`);
-        if (this.configurationService.demoMode) {
-            this.localStorage.clear();
-            this.apiService.saveToLocal(this.mockService.generatePhotosArray(50));
-        }
     }
 
 }

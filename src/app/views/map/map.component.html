@@ -1,5 +1,4 @@
 <ns-action-bar></ns-action-bar>
-<Label *ngIf="configurationService.demoMode" text="Demo Mode"></Label>
 <GridLayout rows="*,60">
     <MapView row="0" #mapView [latitude]="currentLat" [longitude]="currentLng"
              [zoom]="zoom" [minZoom]="minZoom" [maxZoom]="maxZoom" [bearing]="bearing"
@@ -11,27 +10,34 @@
              (cameraMove)="onCameraMove($event)"></MapView>
 
     <StackLayout row="1" orientation="horizontal">
+        <!--StackLayout>
+            <Switch
+                checked="false"
+                (checkedChange)="onCheckedChange($event)"
+                class="m-15">
+            </Switch>
+        </StackLayout-->
         <Button
-            *ngIf="!heatToggled"
+            *ngIf="viewMode === ViewMode.HeatMap"
             class="cancel-btn"
             width="30%"
-            (tap)="visualize()"
+            (tap)="togglePointsMap()"
+            (onLongPress)="toggleDemoMode()"
+            text="Back"
+            clearHistory="true">
+        </Button>
+
+        <Button
+            *ngIf="viewMode === ViewMode.PointsMap"
+            class="cancel-btn"
+            width="30%"
+            (tap)="toggleHeatMap()"
             (onLongPress)="toggleDemoMode()"
             text="Heat"
             clearHistory="true">
         </Button>
 
         <Button
-            *ngIf="heatToggled"
-            class="main-btn"
-            width="100%"
-            (tap)="reloadMap()"
-            text="Reload Map"
-            clearHistory="true">
-        </Button>
-
-        <Button
-            *ngIf="!heatToggled"
             class="main-btn"
             width="70%"
             (tap)="openCamera($event)"

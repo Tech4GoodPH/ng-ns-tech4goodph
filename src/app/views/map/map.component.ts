@@ -4,14 +4,14 @@ import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/mod
 
 import { ImageAsset } from 'tns-core-modules/image-asset';
 
-import { DEFAULT_Y, DEFAULT_X, Photo } from '~/app/interfaces/photo.interface';
+import { DEFAULT_Y, DEFAULT_X, Photo, Rating } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
-import { ApiAccessService } from '~/app/services/api-access/api-access.service';
+import { ApiAccessService, PHOTOS_STORAGE_KEY } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
 import { DetailsDialogComponent } from '../details-dialog/details-dialog.component';
 
 import { Accuracy } from 'tns-core-modules/ui/enums';
-import { MapView, Marker, Position, Bounds } from 'nativescript-google-maps-sdk';
+import { MapView, Marker, Position, Bounds, Camera } from 'nativescript-google-maps-sdk';
 
 import { registerElement } from 'nativescript-angular/element-registry';
 import { Color } from 'tns-core-modules/color/color';
@@ -21,14 +21,20 @@ registerElement('MapView', () => MapView);
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
 import * as mapUtil from 'nativescript-google-maps-utils';
-import { RouterExtensions } from 'nativescript-angular/router';
+
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
+import { Router, NavigationEnd, ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MockDataService } from '~/app/services/mock-data/mock-data.service';
+import { RouterExtensions } from 'nativescript-angular/router';
 
+export enum ViewMode {
+  HeatMap = 'HeatMapView',
+  PointsMap = 'PoinstMapView'
+}
+export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
 export const DEFAULT_ZOOM = 19;
+export const LAST_CAMERA_KEY = 'LastCamera';
 
 /**
  * Map view component
@@ -43,9 +49,12 @@ export const DEFAULT_ZOOM = 19;
 export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   appName: string;
-  heatToggled: boolean;
+  viewMode: ViewMode = ViewMode.PointsMap;
   subscriptions: Subscription[] = [];
   demoMode: boolean;
+  ViewMode = ViewMode;
+  firstLoad: boolean;
+  longPressedViewMode: boolean;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -56,9 +65,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     padding = [40, 40, 40, 40];
     currentLat = DEFAULT_X;
     currentLng = DEFAULT_Y;
-    lastCamera: String;
     photosArray: Photo[];
     map: MapView;
+    userLat: number;
+    userLng: number;
 
   /** camera settings */
     saveToGallery = true;
@@ -80,15 +90,17 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private loggerService: LoggerService,
     private viewContainer: ViewContainerRef,
     private dialogService: ModalDialogService,
-    private router: Router,
+    private ngRouter: Router,
+    private router: RouterExtensions,
+    private route: ActivatedRoute
   ) {
-      this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      this.ngRouter.routeReuseStrategy.shouldReuseRoute = function () {
         return false;
       };
-      const subscription = this.router.events.subscribe((event) => {
+      const subscription = this.ngRouter.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           // Trick the Router into believing it's last link wasn't previously loaded
-          this.router.navigated = false;
+          this.ngRouter.navigated = false;
         }
       });
       this.subscriptions.push(subscription);
@@ -96,9 +108,21 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.demoMode = this.configurationService.demoMode;
-    this.heatToggled = false;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
+
+    this.route.params.forEach((params: Params) => {
+      this.viewMode = params.mode;
+    });
+
+    if (typeof this.viewMode === 'undefined') {
+      this.firstLoad = true;
+      this.viewMode = DEFAULT_VIEW_MODE;
+    } else {
+      this.firstLoad = false;
+    }
+
+    this.loggerService.debug(`[MapComponent initialize...] ViewMode: ${this.viewMode} ${this.viewMode === ViewMode.PointsMap ? 'PointsMap View' : 'HeatMap View'}`);
   }
 
   ngAfterViewInit() {
@@ -110,27 +134,43 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleDemoMode() {
+    this.longPressedViewMode = true;
     this.demoMode = this.configurationService.toggleDemoMode();
     this.loggerService.debug(`[MapComponent toggleDemoMode] is demo mode? ${this.demoMode}`);
-    if (this.demoMode) {
+    if (this.demoMode && !this.firstLoad) {
       this.loggerService.debug(`[MapComponent toggleDemoMode] now generating array`);
+      this.apiService.clearLocalPhotos();
       this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50));
     } else {
       this.loggerService.debug(`[MapComponent toggleDemoMode] now clearing array`);
-      this.localStorage.clear();
+      this.apiService.clearLocalPhotos();
     }
-    this.reloadMap();
+    this.refreshMarkers();
   }
 
-  visualize() {
-    this.heatToggled = true;
-    this.map.removeAllMarkers();
+  togglePointsMap() {
+    if (this.longPressedViewMode) {
+      this.longPressedViewMode = false;
+      return;
+    }
+    this.router.navigate(['map', ViewMode.PointsMap]);
+  }
+
+  toggleHeatMap() {
+    if (this.longPressedViewMode) {
+      this.longPressedViewMode = false;
+      return;
+    }
+    this.router.navigate(['map', ViewMode.HeatMap]);
+  }
+
+  setupHeatMap() {
     // positions of bad locations
-    const positions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
+    const positions = this.photosArray.filter(photo => photo.rating === Rating.Bad).map(photo => {
       return Position.positionFromLatLng(photo.lat, photo.lng);
     });
     mapUtil.setupHeatmap(this.map, positions);
-    this.loggerService.debug(`[MapComponent visualize] heatmap toggled for ${positions.length} points`);
+    this.loggerService.debug(`[MapComponent setupHeatMap] heatmap toggled for ${positions.length} points`);
   }
 
   openCamera(args) {
@@ -169,11 +209,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                         `Image Size: ${Math.round(this.actualWidth / this.scale)}x${Math.round(this.actualHeight / this.scale)}`;
 
                     this.loggerService.debug(`[MapComponent openCamera] taken photo`, this.cameraImage);
-                    const photo = new Photo(this.cameraImage['_android'], new Date(), this.currentLat, this.currentLng);
+                    const photo = new Photo(this.cameraImage['_android'], new Date(), this.userLat, this.userLng);
                     this.apiService.saveToLocal(photo);
                     this.loggerService.debug(`[MapComponent openCamera] save to local`, photo);
                     // open photo detail
-                    this.router.navigate(['details', photo.id]);
+                    this.router.navigate(['details', photo.id, {clearHistory: true}]);
 
                     // console.log(`${this.labelText}`);
                 });
@@ -194,7 +234,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loggerService.debug(`[MapComponent clearPhotosArray] clearing ${this.photosArray.length} photos`);
     this.map.removeAllMarkers();
     this.photosArray = [];
-    this.localStorage.clear();
+    this.localStorage.remove(PHOTOS_STORAGE_KEY);
   }
 
   /**
@@ -222,13 +262,24 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onCameraChanged(args) {
-        // console.log('Camera changed: ' + JSON.stringify(args.camera), JSON.stringify(args.camera) === this.lastCamera);
-        this.lastCamera = JSON.stringify(args.camera);
+        // store camera to storage
+        this.localStorage.setItem(LAST_CAMERA_KEY, args.camera);
     }
 
     onCameraMove(args) {
         // console.log('Camera moving: ' + JSON.stringify(args.camera));
     }
+
+  onCheckedChange(event: any) {
+    const isChecked = event.object.checked;
+    if (isChecked) {
+      this.router.navigate(['map', ViewMode.HeatMap, {clearHistory: true}]);
+      this.loggerService.debug(`[MapComponent onCheckedChange] toggle heat map`);
+    } else {
+      this.router.navigate(['map', ViewMode.PointsMap, {clearHistory: true}]);
+      this.loggerService.debug(`[MapComponent onCheckedChange] toggle points map`);
+    }
+  }
 
   /**
    * Fires after map is rendered
@@ -236,65 +287,75 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   onMapReady(event: any) {
     this.map = event.object;
-    this.addMarkers();
-    const gmap = this.map.gMap;
 
-    this.loggerService.debug(`[MapComponent onMapReady]`, gmap);
+    if (this.viewMode === ViewMode.PointsMap) {
+      this.setupMarkers();
+    } else {
+      this.setupHeatMap();
+    }
+
+    this.loggerService.debug(`[MapComponent onMapReady] map is ready. view mode: ${this.viewMode}`);
   }
 
-  private addPhotoMarker(photoId: string) {
-    const photo = this.apiService.getPhoto(photoId);
-    const marker = new Marker();
-    marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
-    // marker.title = photo.id;
-    // marker.snippet = this.apiService.ratingToString(photo.rating);
-    switch (photo.rating) {
-      case 1: marker.color = new Color('green'); break;
-      case 0: marker.color = new Color('red'); break;
-      default: marker.color = new Color('gray'); break;
-    }
-    marker.userData = {id: photo.id};
-    if (this.map) {
-      this.map.addMarker(marker);
-    }
-  }
-
-  private reloadMap() {
-    this.router.navigate(['map']);
+  private reloadMap(viewMode: ViewMode = ViewMode.PointsMap) {
+    this.router.navigate(['map', viewMode, {clearHistory: true}]);
   }
 
   private refreshMarkers() {
-    this.heatToggled = false;
     if (this.map) {
       this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
       this.photosArray = this.apiService.listPhotos();
-      this.addMarkers();
+      if (this.viewMode === ViewMode.HeatMap) {
+        this.setupHeatMap();
+      } else {
+        this.setupMarkers();
+      }
     } else {
       this.loggerService.debug(`[MapComponent refreshMarkers] map not yet ready`);
     }
   }
 
-  private addMarkers() {
+  private setupMarkers() {
     if (this.photosArray && this.photosArray.length) {
-      this.loggerService.debug(`[MapComponent addMarkers] ${this.photosArray.length} photos`);
-      this.photosArray.forEach(photo => {
+
+      // set up bad markers
+      const badMarkers: Marker[] = [];
+      this.photosArray.filter(photo => photo.rating === Rating.Bad).forEach(photo => {
         const marker = new Marker();
         marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
         // marker.title = photo.id;
         // marker.snippet = this.apiService.ratingToString(photo.rating);
-        switch (photo.rating) {
-          case 1: marker.color = new Color('#7ed957'); break;
-          case 0: marker.color = new Color('#ff5c5c'); break;
-          default: marker.color = new Color('gray'); break;
-        }
+        marker.color = new Color('#ff5c5c');
         marker.userData = {id: photo.id};
-        if (this.map) {
-          this.map.addMarker(marker);
-        }
+        badMarkers.push(marker);
       });
+
+      // set up good markers
+      const goodMarkers: Marker[] = [];
+      this.photosArray.filter(photo => photo.rating === Rating.Good).forEach(photo => {
+        const marker = new Marker();
+        marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
+        // marker.title = photo.id;
+        // marker.snippet = this.apiService.ratingToString(photo.rating);
+        marker.color = new Color('#7ed957');
+        marker.userData = {id: photo.id};
+        goodMarkers.push(marker);
+      });
+
+      if (this.configurationService.clusterPoints) {
+        this.loggerService.debug(`[MapComponent setupMarkers] clustering...`, {good: goodMarkers[0].color, bad: badMarkers[0].color});
+        mapUtil.setupMarkerCluster(this.map, badMarkers, {styles : {color: '#ff5c5c'}});
+        mapUtil.setupMarkerCluster(this.map, goodMarkers, {styles : {color: '#7ed957'}});
+      } else {
+        [...goodMarkers, ...badMarkers].forEach(marker => {
+          this.map.addMarker(marker);
+        });
+      }
+
+      this.loggerService.debug(`[MapComponent setupMarkers] Bad: ${badMarkers.length}, Good: ${goodMarkers.length}`);
     } else {
-      this.loggerService.debug(`[MapComponent addMarkers] photosArray not yet populated`);
+      this.loggerService.debug(`[MapComponent setupMarkers] photosArray not yet populated`);
     }
   }
 
@@ -322,7 +383,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private requestLocationAccess() {
     this.loggerService.debug(`[MapComponent request] request location access permission`);
     geolocation.enableLocationRequest().then(() => {
-        this.loggerService.debug(`[MapComponent request] location enabled!`);
+        this.loggerService.debug(`[MapComponent request] location enabled - searching user location`);
+        this.localStorage.remove(LAST_CAMERA_KEY);
         this.watchUserLocation();
     }, e => {
         this.loggerService.error(`[MapComponent request] Failed to enable`, e);
@@ -333,14 +395,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    * Watches for change in users location then sets current location (x, y)
    */
   private watchUserLocation() {
-      this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
-        // don't recenter if heat map is toggled
-        if (!this.heatToggled) {
-          this.currentLat = position.latitude;
-          this.currentLng = position.longitude;
+        this.loggerService.debug(`[MapComponent watchUserLocation] user location found:`, position);
+        this.userLat = position.latitude;
+        this.userLng = position.longitude;
+        if (this.firstLoad) {
+          this.firstLoad = false;
+          this.currentLng = this.userLng;
+          this.currentLat = this.userLat;
+          if (this.demoMode) {
+            this.apiService.clearLocalPhotos();
+            this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50, this.currentLat, this.currentLng));
+            this.refreshMarkers();
+          }
+        } else {
+          this.recenterMap();
         }
-        this.loggerService.debug(`[MapComponent watchUserLocation] current location: (${this.currentLat}, ${this.currentLng})`);
+        this.loggerService.debug(`[MapComponent watchUserLocation] user location: (${this.currentLat}, ${this.currentLng})`);
       }, e => {
           this.loggerService.error('[MapComponent watchUserLocation] failed to get location');
       }, {
@@ -349,12 +420,22 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  private recenterMapToUser() {
+      this.currentLng = this.userLng;
+      this.currentLat = this.userLat;
+      this.zoom = DEFAULT_ZOOM;
+      this.loggerService.debug(`[MapComponent recenterMapToUser] user location: (${this.currentLat}, ${this.currentLng})`);
+  }
+
   private recenterMap() {
-    const southWest = Position.positionFromLatLng(this.currentLat - 0.0006943, this.currentLng - 0.0004659);
-    const northEast = Position.positionFromLatLng(this.currentLat + 0.0006943, this.currentLng + 0.0004659);
-    const bounds = Bounds.fromCoordinates(southWest, northEast);
-    this.map.setViewport(bounds);
-    this.refreshMarkers();
-    this.loggerService.debug(`[MapComponent recenterMap] (${this.currentLat}, ${this.currentLng})`);
+    const lastCamera: Camera = this.localStorage.getItem(LAST_CAMERA_KEY);
+    if (typeof lastCamera !== 'undefined') { // && this.currentLng !== lastCamera.longitude && this.currentLat !== lastCamera.latitude) {
+      this.currentLng = lastCamera.longitude;
+      this.currentLat = lastCamera.latitude;
+      this.zoom = lastCamera.zoom;
+      this.loggerService.debug(`[MapComponent recenterMap] center to last stored location: (${this.currentLat}, ${this.currentLng})`);
+    } else {
+      this.recenterMapToUser();
+    }
   }
 }

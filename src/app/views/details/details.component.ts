@@ -6,6 +6,7 @@ import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { RouterExtensions } from 'nativescript-angular/router';
 
 import * as application from 'tns-core-modules/application';
+import { ViewMode } from '../map/map.component';
 
 /**
  * Details view component for reviewing photo data before uploading
@@ -48,7 +49,7 @@ export class DetailsComponent implements OnInit {
   cancel() {
     this.apiService.removeFromLocal(this.photoId);
     this.loggerService.debug(`[DetailsComponent cancel]`);
-    this.router.navigate(['map', {pageTransitbuiion: 'slideRight', clearHistory: true}]);
+    this.router.navigate(['map', ViewMode.PointsMap, {pageTransition: 'slideRight', clearHistory: true}]);
   }
 
   ratePhoto(rating: number) {
@@ -63,7 +64,7 @@ export class DetailsComponent implements OnInit {
     this.apiService.saveToLocal(photo);
     this.apiService.uploadPhoto(photo);
     this.loggerService.debug(`[DetailsComponent ratePhoto] ${rating}`);
-    this.router.navigate(['map', {pageTransition: 'slideRight', clearHistory: true}]);
+    this.router.navigate(['map', ViewMode.PointsMap, {pageTransition: 'slideRight', clearHistory: true}]);
   }
 
 }

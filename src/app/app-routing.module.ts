@@ -8,7 +8,7 @@ import { DetailsDialogComponent } from './views/details-dialog/details-dialog.co
 
 const routes: Routes = [
   { path: '', redirectTo: '/map', pathMatch: 'full' },
-  { path: 'map/:id',
+  { path: 'map/:mode',
     component: MapComponent,
     data: { title: 'Map View'},
     children: [
