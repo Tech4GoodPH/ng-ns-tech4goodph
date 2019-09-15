@@ -2,12 +2,17 @@
 export const DEFAULT_X = 14.692293;
 export const DEFAULT_Y = 121.097527;
 
+export enum Rating {
+  Bad = 0,
+  Good = 1
+}
+
 export interface IPhoto {
   url: string; // url
   timestamp: Date;
   lng: number;
   lat: number;
-  rating: number;
+  rating: Rating;
   id: string; // unique id
 }
 

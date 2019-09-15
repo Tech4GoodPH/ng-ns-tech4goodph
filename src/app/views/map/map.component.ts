@@ -4,7 +4,7 @@ import { ModalDialogService, ModalDialogOptions } from 'nativescript-angular/mod
 
 import { ImageAsset } from 'tns-core-modules/image-asset';
 
-import { DEFAULT_Y, DEFAULT_X, Photo } from '~/app/interfaces/photo.interface';
+import { DEFAULT_Y, DEFAULT_X, Photo, Rating } from '~/app/interfaces/photo.interface';
 import { LocalStorageService } from '~/app/services/local-storage/local-storage.service';
 import { ApiAccessService } from '~/app/services/api-access/api-access.service';
 import { LoggerService } from '~/app/services/logger/logger.service';
@@ -259,7 +259,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   onMapReady(event: any) {
     this.map = event.object;
     if (this.viewMode === ViewMode.PointsMap) {
-      this.addMarkers();
+      this.setupMarkers();
     } else {
       this.setupHeatMap();
     }
@@ -268,25 +268,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loggerService.debug(`[MapComponent onMapReady]`, gmap);
   }
 
-  private addPhotoMarker(photoId: string) {
-    const photo = this.apiService.getPhoto(photoId);
-    const marker = new Marker();
-    marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
-    // marker.title = photo.id;
-    // marker.snippet = this.apiService.ratingToString(photo.rating);
-    switch (photo.rating) {
-      case 1: marker.color = new Color('green'); break;
-      case 0: marker.color = new Color('red'); break;
-      default: marker.color = new Color('gray'); break;
-    }
-    marker.userData = {id: photo.id};
-    if (this.map) {
-      this.map.addMarker(marker);
-    }
-  }
-
-  private reloadMap() {
-    this.router.navigate(['map', {clearHistory: true}]);
+  private reloadMap(viewMode: ViewMode = ViewMode.PointsMap) {
+    this.router.navigate(['map', viewMode, {clearHistory: true}]);
   }
 
   private refreshMarkers() {
@@ -294,32 +277,52 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
       this.photosArray = this.apiService.listPhotos();
-      this.addMarkers();
+      this.setupMarkers();
     } else {
       this.loggerService.debug(`[MapComponent refreshMarkers] map not yet ready`);
     }
   }
 
-  private addMarkers() {
+  private setupMarkers() {
     if (this.photosArray && this.photosArray.length) {
-      this.loggerService.debug(`[MapComponent addMarkers] ${this.photosArray.length} photos`);
-      this.photosArray.forEach(photo => {
+
+      // set up bad markers
+      const badMarkers: Marker[] = [];
+      this.photosArray.filter(photo => photo.rating === Rating.Bad).forEach(photo => {
         const marker = new Marker();
         marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
         // marker.title = photo.id;
         // marker.snippet = this.apiService.ratingToString(photo.rating);
-        switch (photo.rating) {
-          case 1: marker.color = new Color('#7ed957'); break;
-          case 0: marker.color = new Color('#ff5c5c'); break;
-          default: marker.color = new Color('gray'); break;
-        }
+        marker.color = new Color('#ff5c5c');
         marker.userData = {id: photo.id};
-        if (this.map) {
-          this.map.addMarker(marker);
-        }
+        badMarkers.push(marker);
       });
+
+      // set up good markers
+      const goodMarkers: Marker[] = [];
+      this.photosArray.filter(photo => photo.rating === Rating.Good).forEach(photo => {
+        const marker = new Marker();
+        marker.position = Position.positionFromLatLng(photo.lat, photo.lng);
+        // marker.title = photo.id;
+        // marker.snippet = this.apiService.ratingToString(photo.rating);
+        marker.color = new Color('#7ed957');
+        marker.userData = {id: photo.id};
+        goodMarkers.push(marker);
+      });
+
+      if (this.configurationService.clusterPoints) {
+        this.loggerService.debug(`[MapComponent setupMarkers] clustering...`, {good: goodMarkers[0].color, bad: badMarkers[0].color});
+        mapUtil.setupMarkerCluster(this.map, badMarkers, {styles : {color: '#ff5c5c'}});
+        mapUtil.setupMarkerCluster(this.map, goodMarkers, {styles : {color: '#7ed957'}});
+      } else {
+        [...goodMarkers, ...badMarkers].forEach(marker => {
+          this.map.addMarker(marker);
+        });
+      }
+
+      this.loggerService.debug(`[MapComponent setupMarkers] Bad: ${badMarkers.length}, Good: ${goodMarkers.length}`);
     } else {
-      this.loggerService.debug(`[MapComponent addMarkers] photosArray not yet populated`);
+      this.loggerService.debug(`[MapComponent setupMarkers] photosArray not yet populated`);
     }
   }
 
