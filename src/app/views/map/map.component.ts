@@ -21,13 +21,17 @@ registerElement('MapView', () => MapView);
 import * as geolocation from 'nativescript-geolocation';
 import * as camera from 'nativescript-camera';
 import * as mapUtil from 'nativescript-google-maps-utils';
-import { RouterExtensions } from 'nativescript-angular/router';
 import { ConfigurationService } from '~/app/services/configuration/configuration.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
+import { Router, NavigationEnd, ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MockDataService } from '~/app/services/mock-data/mock-data.service';
+import { RouterExtensions } from 'nativescript-angular/router';
 
+export enum ViewMode {
+  HeatMap = 'HeatMapView',
+  PointsMap = 'PoinstMapView'
+}
+export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
 export const DEFAULT_ZOOM = 19;
 
 /**
@@ -43,9 +47,10 @@ export const DEFAULT_ZOOM = 19;
 export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   appName: string;
-  heatToggled: boolean;
+  viewMode: ViewMode = ViewMode.PointsMap;
   subscriptions: Subscription[] = [];
   demoMode: boolean;
+  ViewMode = ViewMode;
 
   /** map settings */
     zoom = DEFAULT_ZOOM;
@@ -80,15 +85,17 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private loggerService: LoggerService,
     private viewContainer: ViewContainerRef,
     private dialogService: ModalDialogService,
-    private router: Router,
+    private ngRouter: Router,
+    private router: RouterExtensions,
+    private route: ActivatedRoute
   ) {
-      this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      this.ngRouter.routeReuseStrategy.shouldReuseRoute = function () {
         return false;
       };
-      const subscription = this.router.events.subscribe((event) => {
+      const subscription = this.ngRouter.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           // Trick the Router into believing it's last link wasn't previously loaded
-          this.router.navigated = false;
+          this.ngRouter.navigated = false;
         }
       });
       this.subscriptions.push(subscription);
@@ -96,9 +103,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.demoMode = this.configurationService.demoMode;
-    this.heatToggled = false;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
+
+    this.route.params.forEach((params: Params) => {
+      this.viewMode = params.mode;
+    });
+
+    if (typeof this.viewMode === 'undefined') {
+      this.viewMode = DEFAULT_VIEW_MODE;
+    }
+
+    this.loggerService.debug(`[MapComponent initialize...] ViewMode: ${this.viewMode} ${this.viewMode === ViewMode.PointsMap ? 'PointsMap View' : 'HeatMap View'}`);
   }
 
   ngAfterViewInit() {
@@ -122,15 +138,21 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.reloadMap();
   }
 
-  visualize() {
-    this.heatToggled = true;
-    this.map.removeAllMarkers();
+  togglePointsMap() {
+    this.router.navigate(['map', ViewMode.PointsMap]);
+  }
+
+  toggleHeatMap() {
+    this.router.navigate(['map', ViewMode.HeatMap]);
+  }
+
+  setupHeatMap() {
     // positions of bad locations
     const positions = this.photosArray.filter(photo => photo.rating !== 1).map(photo => {
       return Position.positionFromLatLng(photo.lat, photo.lng);
     });
     mapUtil.setupHeatmap(this.map, positions);
-    this.loggerService.debug(`[MapComponent visualize] heatmap toggled for ${positions.length} points`);
+    this.loggerService.debug(`[MapComponent setupHeatMap] heatmap toggled for ${positions.length} points`);
   }
 
   openCamera(args) {
@@ -173,7 +195,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.apiService.saveToLocal(photo);
                     this.loggerService.debug(`[MapComponent openCamera] save to local`, photo);
                     // open photo detail
-                    this.router.navigate(['details', photo.id]);
+                    this.router.navigate(['details', photo.id, {clearHistory: true}]);
 
                     // console.log(`${this.labelText}`);
                 });
@@ -236,7 +258,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   onMapReady(event: any) {
     this.map = event.object;
-    this.addMarkers();
+    if (this.viewMode === ViewMode.PointsMap) {
+      this.addMarkers();
+    } else {
+      this.setupHeatMap();
+    }
     const gmap = this.map.gMap;
 
     this.loggerService.debug(`[MapComponent onMapReady]`, gmap);
@@ -260,11 +286,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private reloadMap() {
-    this.router.navigate(['map']);
+    this.router.navigate(['map', {clearHistory: true}]);
   }
 
   private refreshMarkers() {
-    this.heatToggled = false;
     if (this.map) {
       this.loggerService.debug(`[MapComponent refreshMarkers]`, this.photosArray);
       this.map.removeAllMarkers();
@@ -336,7 +361,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loggerService.debug(`[MapComponent watchUserLocation]`);
       geolocation.watchLocation(position => {
         // don't recenter if heat map is toggled
-        if (!this.heatToggled) {
+        if (this.viewMode === ViewMode.HeatMap) {
           this.currentLat = position.latitude;
           this.currentLng = position.longitude;
         }

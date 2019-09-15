@@ -12,26 +12,25 @@
 
     <StackLayout row="1" orientation="horizontal">
         <Button
-            *ngIf="!heatToggled"
+            *ngIf="viewMode === ViewMode.PointsMap"
             class="cancel-btn"
             width="30%"
-            (tap)="visualize()"
+            (tap)="toggleHeatMap()"
             (onLongPress)="toggleDemoMode()"
             text="Heat"
             clearHistory="true">
         </Button>
 
         <Button
-            *ngIf="heatToggled"
-            class="main-btn"
-            width="100%"
-            (tap)="reloadMap()"
-            text="Reload Map"
+            *ngIf="viewMode === ViewMode.HeatMap"
+            class="cancel-btn"
+            width="30%"
+            (tap)="togglePointsMap()"
+            text="Points"
             clearHistory="true">
         </Button>
 
         <Button
-            *ngIf="!heatToggled"
             class="main-btn"
             width="70%"
             (tap)="openCamera($event)"
