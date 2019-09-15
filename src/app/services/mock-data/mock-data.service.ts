@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Photo } from '~/app/interfaces/photo.interface';
+import { Photo, Rating } from '~/app/interfaces/photo.interface';
 import { LoggerService } from '../logger/logger.service';
 import { ApiAccessService } from '../api-access/api-access.service';
 import { ConfigurationService } from '../configuration/configuration.service';
@@ -46,6 +46,11 @@ export class MockDataService {
 
       photo.id = this.apiService.generatePhotoId();
       photo.rating = Math.round(Math.random() * 2);
+      if (photo.rating === Rating.Bad) {
+        photo.url = '~/assets/garbage-bad.jpg';
+      } else {
+        photo.url = '~/assets/garbage-good.jpg';
+      }
       photosArray.push(photo);
     }
 
