@@ -13,7 +13,9 @@ import { ImageAsset } from 'tns-core-modules/image-asset/image-asset';
 import * as bgHttpModule from 'nativescript-background-http';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
-const API_UPLOAD = 'http://10.0.2.2:8080/upload';
+import { environment  } from '../../../environments/environment';
+
+const API_UPLOAD = environment.API_URL + '/upload';
 
 /**
  * Service for communicating with API and the local storage
