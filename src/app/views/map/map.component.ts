@@ -32,7 +32,7 @@ export enum ViewMode {
   PointsMap = 'PoinstMapView'
 }
 export const DEFAULT_VIEW_MODE = ViewMode.PointsMap; // set default view here
-export const DEFAULT_ZOOM = 12;
+export const DEFAULT_ZOOM = 15;
 export const LAST_CAMERA_KEY = 'LastCamera';
 
 /**
@@ -106,7 +106,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.firstLoad = true;
     this.demoMode = this.configurationService.demoMode;
     this.appName = this.configurationService.appName;
     this.photosArray = this.apiService.listPhotos();
@@ -116,7 +115,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if (typeof this.viewMode === 'undefined') {
+      this.firstLoad = true;
       this.viewMode = DEFAULT_VIEW_MODE;
+    } else {
+      this.firstLoad = false;
     }
 
     this.loggerService.debug(`[MapComponent initialize...] ViewMode: ${this.viewMode} ${this.viewMode === ViewMode.PointsMap ? 'PointsMap View' : 'HeatMap View'}`);
@@ -403,7 +405,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.demoMode) {
             this.apiService.clearLocalPhotos();
             this.apiService.saveToLocal(this.mockDataService.generatePhotosArray(50, this.currentLat, this.currentLng));
-            this.loggerService.debug(`[MapComponent watchUserLocation] first load, demo mode, generated mock data`);
             this.refreshMarkers();
           }
         } else {

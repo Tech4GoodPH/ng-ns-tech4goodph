@@ -15,6 +15,18 @@ export class MockDataService {
     private apiService: ApiAccessService
   ) { }
 
+  randomizeLocations(photosArray: Photo[], lat: number, lng: number) {
+    photosArray.forEach(photo => {
+      if (typeof lat !== 'undefined') {
+        photo.lat = lat + (Math.random() * 0.201) - .1;
+      }
+
+      if (typeof lng !== 'undefined') {
+        photo.lng = lng  + (Math.random() * 0.201) - .1;
+      }
+    });
+  }
+
   /**
    * Returns an array of Photos with random locations
    * @param length - optional number of photos in the returned array
