@@ -62,15 +62,8 @@ export class ApiAccessService {
       { name: "meta", value: JSON.stringify(photo) }, 
       { name: "uploadFile", filename: photo.url, mimeType: 'image/jpeg' }
     ];
+    
     var task = session.multipartUpload(params, request);
-  }
-
-  progressHandler(e) {
-    alert("uploaded " + e.currentBytes + " / " + e.totalBytes);
-  }
-
-  errorHandler(e) {
-    console.log(e);
   }
 
   /**
