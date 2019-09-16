@@ -4,8 +4,6 @@
 
 This project is created with NativeScript and Angular for the hackathon describe here: https://ng-ns.org
 
-> "Bayanihan is a core essence of the Filipino culture." -[Everything Filipino Blog](https://everything-filipino.com/filipino-culture-bayanihan-the-filipino-value-that-must-be-retained/)
-
 ## Mission and Future Plans
 
 The Philippines is frequently rated as one of the least disciplined countries on garbage disposal. This leads to disasters such as flooding and landslides that further endanger millions of lives. Our project, Bayanihan Maps, aims to support NGOs and Local Government Units in their programs and/or policies on Solid Waste Management by enabling users to report locations that need improvement (Bad) and proper locations for garbage disposal (Good). The data that our app collects will be made open and accessible for analysis.
@@ -15,6 +13,9 @@ Future developments will encourage users to report by having gamification in the
 We'll also have a way to mark bad locations as "Resolved", after which the marker and rating will change.
 
 We will also have a feature to facilitate "Clean up drives" where an organizer can specify an area in the map for the drive. The clean up drive can be "Joined" by users who want to join. There will be a "Scoring System" during a drive, and the organizers can "Add Rewards" for categories such as "Highest Score for Resolving Bad Areas" or "Highest Score for Reporting Bad Areas".
+
+> "Bayanihan is a core essence of the Filipino culture."
+> - [Everything Filipino Blog](https://everything-filipino.com/filipino-culture-bayanihan-the-filipino-value-that-must-be-retained/)
 
 ## Downloads
 
