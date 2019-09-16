@@ -41,10 +41,10 @@ The prototype right now is in Demo Mode: it generates mock data around the user'
 
 7. On the Map View, tapping points will open a Details Dialog. This will show the rating and the time stamp of the reported location.
 
-## Links 
+## Other Links 
 Our current partner organization: UP PLANO 
-https://facebook.com/UPplano/
-http://upplano.org/
+- https://facebook.com/UPplano/
+- http://upplano.org/
 
 Our initial meeting notes: https://bit.ly/hack4goodph
 
