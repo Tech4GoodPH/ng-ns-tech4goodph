@@ -22,7 +22,7 @@ The prototype right now is in Demo Mode: it generates mock data around the user'
 
 3. To toggle demo mode on and off, long press the "HEAT" button. *Warning:* Doing this will clear the data.
 
-4. Toggling the Demo Mode on again will regenerate some mock data around your location.
+4. Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
 
 5. Click "Add Point" to open the camera and report a garbage dump.
 
