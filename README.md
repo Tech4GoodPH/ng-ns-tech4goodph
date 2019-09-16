@@ -22,17 +22,19 @@ The prototype right now is in Demo Mode: it generates mock data around the user'
 
 1. Zoom out from your location to see all points.
 
-2. Toggle heat map of all Bad locations by tapping the HEAT button. Note that the heat map is from the **Bad** points only, this is what the NGOs are more concerned with at the moment. We will have a switch to toggle Good or Bad in the future.
+2. Tap the HEAT button to see a Heat Map of all Bad locations. Note that the heat map is from the **Bad** points only, this is what the NGOs are more concerned with at the moment. We will have a switch to toggle Good or Bad in the future.
 
-3. Hidden Feature: To toggle Demo Mode off or on, long press the "HEAT" button. *Warning:* Doing this will clear the data.
+3. Tap the BACK button to see the Points Map again.
+
+4. Hidden Feature: To toggle Demo Mode off or on, long press the "HEAT" button. *Warning:* Doing this will clear the data.
 
 **NOTE:** Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
 
-4. Click "Add Point" to open the camera and report a garbage dump. (Another hidden feature for development: Long Press the "Add Point" button to clear the local storage photos array.)
+5. Click "Add Point" to open the camera and report a garbage dump. (Another hidden feature for development: Long Press the "Add Point" button to clear the local storage photos array.)
 
-5. After confirming the taken photo from the camera, the Details View will present you with "Bad!" and "Good!" buttons to rate the location. You can also "Cancel" if you want to.
+6. After confirming the taken photo from the camera, the Details View will present you with "Bad!" and "Good!" buttons to rate the location. You can also "Cancel" if you want to.
 
-6. On the Map View, tapping points will open a Details Dialog. This will show the rating and the time stamp of the reported location.
+7. On the Map View, tapping points will open a Details Dialog. This will show the rating and the time stamp of the reported location.
 
 ## Links 
 Our current partner organization: UP PLANO 
