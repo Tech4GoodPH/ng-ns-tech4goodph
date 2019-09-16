@@ -60,6 +60,4 @@ You can sign up to chat with us: [Tech4GoodPH Slack Invitation](https://docs.goo
 
 Or you can email us at <a href="mailto:tech4good.pm.me">tech4good@pm.me</a>
 
-
-
-![](src/assets/1.png)
+-----
