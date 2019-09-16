@@ -1,8 +1,10 @@
-# A project for Solid Waste Management in the Philippines
+# Bayanihan Maps: A project for Solid Waste Management in the Philippines
 
 ![](/src/assets/fb-cover)
 
 This project is created with NativeScript and Angular for the hackathon describe here: https://ng-ns.org
+
+> "Bayanihan is a core essence of the Filipino culture." -[Everything Filipino Blog](https://everything-filipino.com/filipino-culture-bayanihan-the-filipino-value-that-must-be-retained/)
 
 ## Mission and Future Plans
 
