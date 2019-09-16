@@ -50,7 +50,7 @@ Our initial meeting notes:
 - https://bit.ly/hack4goodph
 
 Our team lead's blog:
-- [Bayanihan: Basurahan](https://ayoayco.com/notes/bayanihan-basurahan).
+- [Bayanihan: Basurahan](https://ayoayco.com/notes/bayanihan-basurahan)
 
 ![](src/assets/1.png)
 
