@@ -1,3 +1,7 @@
+# temp files
+*~
+*.swp
+
 # NativeScript
 hooks/
 node_modules/

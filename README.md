@@ -1,5 +1,7 @@
 # A project for Solid Waste Management in the Philippines
 
+![](src/assets/fb-cover)
+
 This project is created with NativeScript and Angular for the hackathon describe here: https://ng-ns.org
 
 ## Mission and Future Plans
