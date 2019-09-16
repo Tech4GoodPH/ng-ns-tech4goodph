@@ -12,6 +12,10 @@ We'll also have a way to mark bad locations as "Resolved", after which the marke
 
 We will also have a feature to facilitate "Clean up drives" where an organizer can specify an area in the map for the drive. The clean up drive can be "Joined" by users who want to join. There will be a "Scoring System" during a drive, and the organizers can "Add Rewards" for categories such as "Highest Score for Resolving Bad Areas" or "Highest Score for Reporting Bad Areas".
 
+## Downloads
+
+You can download the Android installer here: https://bit.ly/bayanihan-maps-downloads
+
 ## Using the App (Prototype)
 
 The prototype right now is in Demo Mode: it generates mock data around the user's location, just to give you a feel of what the app will be when it has data.
