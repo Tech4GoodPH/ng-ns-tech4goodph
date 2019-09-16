@@ -26,13 +26,15 @@ The prototype right now is in Demo Mode: it generates mock data around the user'
 
 3. Hidden Feature: To toggle Demo Mode off or on, long press the "HEAT" button. *Warning:* Doing this will clear the data.
 
-**NOTE:** Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
+```
+Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
+```
 
-5. Click "Add Point" to open the camera and report a garbage dump. (Another hidden feature for development: Long Press the "Add Point" button to clear the local storage photos array.)
+4. Click "Add Point" to open the camera and report a garbage dump. (Another hidden feature for development: Long Press the "Add Point" button to clear the local storage photos array.)
 
-6. After confirming the taken photo from the camera, the Details View will present you with "Bad!" and "Good!" buttons to rate the location. You can also "Cancel" if you want to.
+5. After confirming the taken photo from the camera, the Details View will present you with "Bad!" and "Good!" buttons to rate the location. You can also "Cancel" if you want to.
 
-7. On the Map View, tapping points will open a Details Dialog. This will show the rating and the time stamp of the reported location.
+6. On the Map View, tapping points will open a Details Dialog. This will show the rating and the time stamp of the reported location.
 
 ## Links 
 Our current partner organization: UP PLANO 
