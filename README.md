@@ -15,7 +15,7 @@ We'll also have a way to mark bad locations as "Resolved", after which the marke
 We will also have a feature to facilitate "Clean up drives" where an organizer can specify an area in the map for the drive. The clean up drive can be "Joined" by users who want to join. There will be a "Scoring System" during a drive, and the organizers can "Add Rewards" for categories such as "Highest Score for Resolving Bad Areas" or "Highest Score for Reporting Bad Areas".
 
 > "Bayanihan is a core essence of the Filipino culture."
-> - [Everything Filipino Blog](https://everything-filipino.com/filipino-culture-bayanihan-the-filipino-value-that-must-be-retained/)
+> [Everything Filipino Blog](https://everything-filipino.com/filipino-culture-bayanihan-the-filipino-value-that-must-be-retained/)
 
 ## Downloads
 
