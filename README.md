@@ -24,7 +24,7 @@ The prototype right now is in Demo Mode: it generates mock data around the user'
 
 2. Toggle heat map of all Bad locations by tapping the HEAT button. Note that the heat map is from the **Bad** points only, this is what the NGOs are more concerned with at the moment. We will have a switch to toggle Good or Bad in the future.
 
-3. Hidden Feature: To toggle Demo Mode on and off, long press the "HEAT" button. *Warning:* Doing this will clear the data. **NOTE:** Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
+3. Hidden Feature: To toggle Demo Mode off or on, long press the "HEAT" button. *Warning:* Doing this will clear the data. **NOTE:** Toggling the Demo Mode off and on again will regenerate some mock data around your location. You may want to do this to get an idea of how the Heat Map looks for different data sets.
 
 5. Click "Add Point" to open the camera and report a garbage dump. (Another hidden feature for development: Long Press the "Add Point" button to clear the local storage photos array.)
 
