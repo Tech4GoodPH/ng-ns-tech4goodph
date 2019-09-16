@@ -46,9 +46,11 @@ Our current partner organization: UP PLANO
 - https://facebook.com/UPplano/
 - http://upplano.org/
 
-Our initial meeting notes: https://bit.ly/hack4goodph
+Our initial meeting notes:
+- https://bit.ly/hack4goodph
 
-[More details here](https://ayoayco.com/notes/bayanihan-basurahan).
+Our team lead's blog:
+- [Bayanihan: Basurahan](https://ayoayco.com/notes/bayanihan-basurahan).
 
 ![](src/assets/1.png)
 
