@@ -1,6 +1,6 @@
 # Bayanihan Maps: A project for Solid Waste Management in the Philippines
 
-![](/src/assets/fb-cover)
+![](src/assets/fb-cover/1.png)
 
 This project is created with NativeScript and Angular for the hackathon describe here: https://ng-ns.org
 
@@ -52,5 +52,14 @@ Our initial meeting notes:
 Our team lead's blog:
 - [Bayanihan: Basurahan](https://ayoayco.com/notes/bayanihan-basurahan)
 
-![](src/assets/1.png)
+## Please Join Us
 
+Interested to join us in our quest? Have suggestions or inquiries? Please let us know what you think.
+
+You can sign up to chat with us: [Tech4GoodPH Slack Invitation](https://docs.google.com/forms/d/e/1FAIpQLScPt5WgyStjvpIsvlst1KRNP0b95gw8o2mzDwBN3JccDxSCDA/viewform?usp=sf_link)
+
+Or you can email us at <a href="mailto:tech4good.pm.me">tech4good@pm.me</a>
+
+
+
+![](src/assets/1.png)
