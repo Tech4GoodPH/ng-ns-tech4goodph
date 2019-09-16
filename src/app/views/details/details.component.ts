@@ -61,6 +61,7 @@ export class DetailsComponent implements OnInit {
     this.apiService.removeFromLocal(this.photoId);
     // upload photo
     photo.rating = rating;
+    this.apiService.saveToLocal(photo);
     this.apiService.uploadPhoto(photo);
     this.loggerService.debug(`[DetailsComponent ratePhoto] ${rating}`);
     this.router.navigate(['map', ViewMode.PointsMap, {pageTransition: 'slideRight', clearHistory: true}]);

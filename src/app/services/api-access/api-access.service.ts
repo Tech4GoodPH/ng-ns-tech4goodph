@@ -7,6 +7,16 @@ import { LoggerService } from '../logger/logger.service';
 
 export const PHOTOS_STORAGE_KEY = 'LocalPhotosArray';
 
+import * as imageSourceModule from 'tns-core-modules/image-source';
+import * as fs from 'tns-core-modules/file-system';
+import { ImageAsset } from 'tns-core-modules/image-asset/image-asset';
+import * as bgHttpModule from 'nativescript-background-http';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+
+import { environment  } from '../../../environments/environment';
+
+const API_UPLOAD = environment.API_URL + '/upload';
+
 /**
  * Service for communicating with API and the local storage
  */
@@ -17,7 +27,8 @@ export class ApiAccessService {
 
   constructor (
     private localStorage: LocalStorageService,
-    private loggerService: LoggerService
+    private loggerService: LoggerService,
+    private http: HttpClient
   ) { }
 
   /**
@@ -25,9 +36,34 @@ export class ApiAccessService {
    * @param photo - photo to be uploaded
    */
   uploadPhoto(photo: Photo): IMessage {
+    if (!photo) {
+      this.loggerService.debug(`[ApiAccessService saveToLocal] no photo found`);
+      return {
+        success: false,
+        message: 'photo undefined'
+      };
+    }
 
-    this.loggerService.debug(`[ApiAccessService uploadPhoto] ${photo.id}`);
-    return this.saveToLocal(photo);
+    this.loggerService.debug("----UPLOAD------------>>");
+   
+    var request = {
+      url: API_UPLOAD,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "File-Name": photo.url
+      },
+      description: 'description'
+    };
+
+    var session = bgHttpModule.session("image-upload");
+    var params = [
+      { name: "type", value: "image/jpeg" },
+      { name: "meta", value: JSON.stringify(photo) }, 
+      { name: "uploadFile", filename: photo.url, mimeType: 'image/jpeg' }
+    ];
+    
+    var task = session.multipartUpload(params, request);
   }
 
   /**
