@@ -1,5 +1,9 @@
 # Bayanihan Maps: A project for Solid Waste Management in the Philippines
 
+Bayanihan Maps is the global winner of the Innovation Prize entry to the NativeScript + Angular Hackathon 2019.
+
+See the official Angular blog : https://blog.angular.io/hack-for-good-6b500f1946a3#36f0
+
 ![](src/assets/fb-cover/1.png)
 
 This project is created with NativeScript and Angular for the hackathon describe here: https://ng-ns.org
